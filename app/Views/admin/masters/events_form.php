@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><?= $title ?></title>
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <!-- Tambahkan CSS Select2 untuk tampilan dropdown yang benar -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        /* ================= ROOT ================= */
+        :root {
+            --bg-main: #0d0f18;
+            --bg-sidebar: #111423;
+            --primary: #1b2b52;
+            --accent: #ffd54f;
+            --text-main: #e9ecf6;
+            --text-muted: #9aa5c3;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --hover-bg: rgba(255, 255, 255, 0.06);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+            --transition: all 0.25s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        /* ================= BACKGROUND VIDEO ================= */
+        .bg-video {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+            filter: brightness(0.65) saturate(0.9) blur(1.2px);
+            pointer-events: none;
+        }
+
+        /* GLOBAL OVERLAY (LEMBUT BIAR VIDEO KELIATAN) */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
+                linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85));
+            z-index: -2;
+            pointer-events: none;
+        }
+
+         /* ================= SIDEBAR ================= */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #111423, #0d101a);
+            border-right: 1px solid var(--border-color);
+            padding: 32px 24px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 42px;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 30px 0 12px;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            transition: var(--transition);
+        }
+
+        .section-title:hover {
+            color: var(--accent);
+        }
+
+        .section-title i {
+            transition: var(--transition);
+        }
+
+        .submenu {
+            display: none;
+            margin-left: 16px;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .submenu.open {
+            display: block;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .sidebar a:hover {
+            background: var(--hover-bg);
+            transform: translateX(6px);
+        }
+
+        .sidebar a.active {
+            background: linear-gradient(135deg, #1f2a44, #2b3760);
+            font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+
+        /* ================= CONTENT ================= */
+        .content {
+            margin-left: 240px;
+            padding: 40px 45px;
+        }
+
+        /* ================= TITLE ================= */
+        .page-title {
+            text-align: center;
+            font-size: 34px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .small-muted {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 28px;
+        }
+
+        /* ================= CARD ================= */
+        .card-box {
+            background: linear-gradient(160deg, rgba(30, 37, 58, 0.85), rgba(16, 19, 33, 0.85));
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 35px;
+            border-radius: 18px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* ================= FORM GROUP ================= */
+        .form-group {
+            position: relative;
+            margin-bottom: 24px;
+            animation: slideInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; }
+        .form-group:nth-child(7) { animation-delay: 0.7s; }
+        .form-group:nth-child(8) { animation-delay: 0.8s; }
+        .form-group:nth-child(9) { animation-delay: 0.9s; }
+        .form-actions { animation-delay: 1.0s; }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #d9e2ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label i {
+            color: var(--accent);
+            font-size: 16px;
+        }
+
+        /* ================= FORM CONTROL ================= */
+        .form-control,
+        select.form-control {
+            width: 100%;
+            background: linear-gradient(135deg, #111829, #151d33);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            height: 50px;
+            border-radius: 12px;
+            padding: 0 16px;
+            transition: var(--transition);
+            font-size: 14px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control:hover {
+            border-color: rgba(255, 213, 79, 0.3);
+            box-shadow: 0 0 8px rgba(255, 213, 79, 0.1);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(255, 213, 79, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #151d33, #1a2138);
+            transform: translateY(-2px);
+            outline: none;
+        }
+
+        textarea.form-control {
+            height: 140px !important;
+            padding-top: 14px;
+            resize: vertical;
+        }
+
+        input[type="file"].form-control {
+            height: auto !important;
+            padding: 12px 16px;
+            cursor: pointer;
+        }
+
+        input[type="file"].form-control:hover {
+            background: linear-gradient(135deg, #151d33, #1a2138);
+        }
+
+        /* ================= PREVIEW ================= */
+        .preview-container {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .preview-img {
+            border-radius: 12px;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .preview-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ================= FORM ACTIONS ================= */
+        .form-actions {
+            text-align: center;
+            margin-top: 30px;
+            animation: slideInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--primary), #2a3d6a);
+            padding: 14px 28px;
+            border-radius: 12px;
+            color: #fff;
+            border: none;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-save::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-save:hover {
+            background: linear-gradient(135deg, #223669, var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-save:hover::before {
+            left: 100%;
+        }
+
+        .btn-save:active {
+            transform: translateY(-1px);
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 768px) {
+            .bg-video {
+                display: none;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px;
+            }
+            .content {
+                margin-left: 0;
+                padding: 32px 22px;
+            }
+            .page-title {
+                font-size: 28px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .card-box {
+                padding: 20px;
+            }
+            .preview-img {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- BACKGROUND VIDEO -->
+<video autoplay muted loop playsinline class="bg-video"
+poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
+    <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
+</video>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="brand">Admin Panel - Ticketing</div>
+
+    <div class="section-title">MAIN</div>
+    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
+
+    <div class="section-title" onclick="toggleSubmenu(this)">
+        MASTERS <i class="fas fa-chevron-down"></i>
+    </div>
+    <ul class="submenu">
+        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
+        <li><a href="/admin/masters/events" class="active"><i class="fas fa-calendar"></i> Events</a></li>
+        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
+        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
+        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
+    </ul>
+
+    <div class="section-title" onclick="toggleSubmenu(this)">
+        TRANSAKSI <i class="fas fa-chevron-down"></i>
+    </div>
+    <ul class="submenu">
+        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
+        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
+        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
+        <li><a href="/admin/transactions/refunds/create"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
+    </ul>
+
+    <div class="section-title" onclick="toggleSubmenu(this)">
+        LAPORAN <i class="fas fa-chevron-down"></i>
+    </div>
+    <ul class="submenu">
+        <li><a href="/admin/reports/daily"><i class="fas fa-clock"></i> Harian</a></li>
+        <li><a href="/admin/reports/monthly"><i class="fas fa-calendar"></i> Bulanan</a></li>
+    </ul>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+    <div class="page-title">
+        <i class="fas fa-calendar"></i> <?= $title ?>
+    </div>
+    <p class="small-muted">Isi data event dengan lengkap.</p>
+
+    <div class="card-box">
+
+        <!-- ALERT ERROR -->
+        <?php if(session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger">
+                <?= session()->getFlashdata('error') ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="<?= $formAction ?>" method="post" enctype="multipart/form-data">
+            <?= csrf_field() ?>
+
+            <!-- JUDUL -->
+            <div class="form-group">
+                <label><i class="fas fa-heading"></i> Judul Event</label>
+                <input type="text" name="title" class="form-control" value="<?= old('title', $event['title'] ?? '') ?>" required>
+            </div>
+
+            <!-- POSTER -->
+            <div class="form-group">
+                <label><i class="fas fa-image"></i> Poster Event</label>
+                <input type="file" name="poster" class="form-control" accept="image/*" onchange="previewPoster(event)">
+                <div class="preview-container">
+                    <img id="preview-img" class="preview-img" 
+                        src="<?= isset($event['poster']) && $event['poster'] ? '/uploads/events/' . $event['poster'] : '' ?>" 
+                        alt="Preview" 
+                        style="display: <?= isset($event['poster']) && $event['poster'] ? 'block' : 'none' ?>;">
+                </div>
+            </div>
+
+            <!-- ARTISTS -->
+            <div class="form-group">
+                <label><i class="fas fa-microphone"></i> Artists</label>
+                <select name="artist_ids[]" id="artist_ids" class="form-control" multiple="multiple" required>
+                    <?php foreach ($artists as $a) : ?>
+                        <option value="<?= $a['id'] ?>" <?= in_array($a['id'], $selectedArtists ?? []) ? 'selected' : '' ?>>
+                            <?= esc($a['name']) ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
+                <small style="color:#9aa5c3;">* Ketik untuk mencari</small>
+            </div>
+
+            <!-- VENUE -->
+            <div class="form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Venue</label>
+                <select name="venue_id" class="form-control" required>
+                    <option value="">-- pilih venue --</option>
+                    <?php foreach ($venues as $v) : ?>
+                        <option value="<?= $v['id'] ?>" <?= ($event['venue_id'] ?? '') == $v['id'] ? 'selected' : '' ?>>
+                            <?= $v['name'] ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
+            </div>
+
+            <!-- TANGGAL -->
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Tanggal</label>
+                <input type="date" name="date" class="form-control" value="<?= old('date', $event['date'] ?? '') ?>" required>
+            </div>
+
+            <!-- JAM MULAI -->
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Jam Mulai</label>
+                <input type="time" name="start_time" class="form-control" value="<?= old('start_time', $event['start_time'] ?? '') ?>" required>
+            </div>
+
+            <!-- JAM SELESAI -->
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Jam Selesai</label>
+                <input type="time" name="end_time" class="form-control" value="<?= old('end_time', $event['end_time'] ?? '') ?>">
+            </div>
+
+            <!-- SUBMIT -->
+            <div class="form-actions">
+                <button class="btn-save">
+                    <i class="fas fa-save"></i> Simpan Event
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#artist_ids').select2({
+        placeholder: 'Cari & pilih artis',
+        width: '100%',
+        closeOnSelect: false
+    });
+});
+
+function previewPoster(event) {
+    const input = event.target;
+    const preview = document.getElementById('preview-img');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+}
+
+function toggleSubmenu(element) {
+    const submenu = element.nextElementSibling;
+    const icon = element.querySelector('i');
+    if (submenu.classList.contains('open')) {
+        submenu.classList.remove('open');
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        submenu.classList.add('open');
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const activeLink = document.querySelector('.submenu a.active');
+    if (activeLink) {
+        const submenu = activeLink.closest('.submenu');
+        const sectionTitle = submenu.previousElementSibling;
+        const icon = sectionTitle.querySelector('i');
+        submenu.classList.add('open');
+        icon.style.transform = 'rotate(180deg)';
+    }
+});
+</script>
+
+</body>
+</html>
