@@ -313,9 +313,9 @@
             <div class="card-title">👥 Total User</div>
             <div class="card-value"><?= number_format($totalUsers) ?></div>
         </div>
-        <div class="card-box">
-            <div class="card-title">💰 Revenue</div>
-            <div class="card-value" style="font-size: 24px; margin-top: 10px;">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></div>
+        <div class="card-box" style="border: 1px solid rgba(255, 213, 79, 0.3);">
+            <div class="card-title">💰 Revenue (Paid Only)</div>
+            <div class="card-value" style="font-size: 24px; margin-top: 10px; color: var(--accent);">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></div>
         </div>
     </div>
 

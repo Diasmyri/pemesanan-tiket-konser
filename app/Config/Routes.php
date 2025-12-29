@@ -99,10 +99,18 @@ $routes->group('admin', function ($routes) {
     // =======================
     // REPORTS (LAPORAN)
     // =======================
+// =======================
+    // REPORTS (LAPORAN)
+    // =======================
     $routes->group('laporan', ['namespace' => 'App\Controllers\Admin\Laporan'], function ($routes) {
         // Laporan Harian
         $routes->get('harian', 'Harian::index');
         
+        // --- TAMBAHKAN DUA BARIS INI ---
+        $routes->get('harian/exportPdf', 'Harian::exportPdf');
+        $routes->get('harian/exportExcel', 'Harian::exportExcel');
+        // ------------------------------
+
         // Laporan Bulanan
         $routes->get('bulanan', 'Bulanan::index');
     });

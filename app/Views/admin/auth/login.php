@@ -2,146 +2,134 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --primary-color: #4e73df;
+            --bg-color: #f8f9fc;
+            --text-main: #5a5c69;
+            --white: #ffffff;
+            --border-color: #d1d3e2;
+        }
+
         body {
             margin: 0;
             padding: 0;
             font-family: "Poppins", sans-serif;
             height: 100vh;
-            overflow: hidden;
-            color: white;
-
-            background: url('https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1350&q=80')
-                        no-repeat center center/cover;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-color);
+            background-image: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+            background-size: cover;
         }
 
+        /* Menghilangkan overlay berat, diganti dengan subtle gradient background */
         .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 0, 30, 0.65);
-            backdrop-filter: blur(4px);
+            display: none; 
         }
 
         .login-card {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 420px;
-            padding: 40px 35px;
-            background: rgba(0, 0, 0, 0.55);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow:
-                0 0 30px rgba(150, 0, 255, 0.4),
-                0 0 45px rgba(0, 217, 255, 0.25);
-            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: var(--white);
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
         }
 
         .login-title {
             text-align: center;
-            font-size: 25px;
-            font-weight: 600;
-            margin-bottom: 25px;
-            text-shadow: 
-                0 0 8px rgba(255, 255, 255, 0.8),
-                0 0 18px rgba(150, 0, 255, 0.7);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+            text-shadow: none; /* Hilangkan glow neon */
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #858796;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
 
         label {
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
         }
 
         .form-control {
             width: 100%;
-            margin-top: 5px;
-            padding: 10px 12px;
-            background: rgba(40, 40, 40, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            color: white;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 50px; /* Style admin modern biasanya rounded-full */
+            color: #495057;
             outline: none;
-            transition: .25s;
+            transition: all .2s ease-in-out;
+            box-sizing: border-box;
+            font-family: inherit;
         }
 
         .form-control:focus {
-            background: rgba(55, 55, 55, 0.95);
-            border-color: #b377ff;
-            box-shadow: 0 0 12px #b377ff;
+            background: #fff;
+            border-color: #bac8f3;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+            color: #6e707e;
+        }
+
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .alert-danger {
+            background-color: #fff5f5;
+            color: #e74a3b;
+            border: 1px solid #ffebeb;
         }
 
         .btn-login {
-            background: linear-gradient(135deg, #7f00ff, #00eaff);
+            background-color: var(--primary-color);
             border: none;
             padding: 12px;
-            margin-top: 18px;
+            margin-top: 10px;
             color: white;
             width: 100%;
-            border-radius: 10px;
+            border-radius: 50px;
             font-weight: 600;
+            font-size: 14px;
             letter-spacing: 0.5px;
-            box-shadow: 0 0 12px rgba(127, 0, 255, 0.6);
-            transition: .25s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all .25s;
             cursor: pointer;
         }
 
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(127, 0, 255, 0.9);
-        }
-
-        .extra-links {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .extra-links a {
-            color: #8ecbff;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .extra-links a:hover {
-            color: white;
-            text-decoration: underline;
-        }
-
-        .register-btn {
-            margin-top: 18px;
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            font-weight: 500;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            cursor: pointer;
-            transition: .25s;
-            display: block;
-            text-align: center;
-        }
-
-        .register-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
+            background-color: #2e59d9;
+            transform: translateY(-1px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
         }
 
         /* Responsif */
         @media (max-width: 480px) {
             .login-card {
-                width: 90%;
-                padding: 25px;
+                width: 85%;
+                padding: 30px 20px;
             }
         }
     </style>
@@ -149,26 +137,28 @@
 
 <body>
 
-    <div class="overlay"></div>
-
     <div class="login-card">
-        <div class="login-title">Admin Login</div>
+        <div class="login-title">Welcome Back!</div>
+        <div class="login-subtitle">Silahkan login ke panel admin</div>
 
         <?php if(session()->getFlashdata('error')): ?>
             <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
         <?php endif; ?>
 
         <form action="/admin/auth/loginProcess" method="post">
+            <div style="margin-bottom: 15px;">
+                <label>Username</label>
+                <input type="text" name="name" class="form-control" placeholder="Enter Username..." required>
+            </div>
 
-            <label>Username</label>
-            <input type="text" name="name" class="form-control" required>
+            <div style="margin-bottom: 15px;">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
 
-            <label style="margin-top:15px;">Password</label>
-            <input type="password" name="password" class="form-control" required>
-
-            <button class="btn-login">Login</button>
+            <button type="submit" class="btn-login">Login System</button>
         </form>
-
+    </div>
 
 </body>
 </html>

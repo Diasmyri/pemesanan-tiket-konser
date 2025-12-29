@@ -33,15 +33,13 @@ class Dashboard extends BaseController
     {
         $db = \Config\Database::connect();
 
-        // ==========================
         // 1. CARD STATISTIK UTAMA
-        // ==========================
         $totalEvents = $this->eventModel->countAll();
         $totalUsers  = $this->userModel->countAll();
 
-        // Total Tiket Terjual (Hanya status paid)
+        // Total Tiket Terjual (Hanya status paid - Case Insensitive)
         $ticketsRow = $this->orderModel
-            ->where('status', 'paid')
+            ->where('LOWER(TRIM(status))', 'paid')
             ->selectSum('qty', 'total_qty')
             ->first();
         $totalTicketsSold = (int)($ticketsRow['total_qty'] ?? 0);
@@ -49,17 +47,29 @@ class Dashboard extends BaseController
         // Total Check-In
         $totalCheckIn = $this->checkinModel->countAllResults();
 
-        // Total Revenue
-        $revRow = $this->paymentModel->selectSum('amount', 'total_amount')->first();
+        // FIX REVENUE: Menggunakan query builder yang lebih kuat untuk menjumlahkan 'amount'
+        $revRow = $db->table('payments')
+            ->selectSum('amount', 'total_amount')
+            ->where('LOWER(TRIM(status))', 'paid')
+            ->get()
+            ->getRowArray();
+        
         $totalRevenue = (float)($revRow['total_amount'] ?? 0);
 
-        // ==========================
+        // JIKA MASIH 0, Coba ambil dari tabel orders (fallback jika tabel payment kosong)
+        if ($totalRevenue <= 0) {
+            $revRowAlt = $this->orderModel
+                ->selectSum('total_price', 'total_amount')
+                ->where('LOWER(TRIM(status))', 'paid')
+                ->first();
+            $totalRevenue = (float)($revRowAlt['total_amount'] ?? 0);
+        }
+
         // 2. GRAFIK PENJUALAN 7 HARI
-        // ==========================
         $salesRaw = $this->orderModel
             ->select("DATE(created_at) as day, SUM(qty) as total")
             ->where('created_at >=', date('Y-m-d 00:00:00', strtotime('-6 days')))
-            ->where('status', 'paid')
+            ->where('LOWER(TRIM(status))', 'paid')
             ->groupBy('day')
             ->orderBy('day', 'ASC')
             ->findAll();
@@ -75,23 +85,12 @@ class Dashboard extends BaseController
                     break;
                 }
             }
-            if (!$found) {
-                $sales7days[] = ['day' => $date, 'total' => 0];
-            }
+            if (!$found) $sales7days[] = ['day' => $date, 'total' => 0];
         }
 
-        // ==========================
         // 3. GRAFIK STATUS PEMBAYARAN
-        // ==========================
-
-        // $paymentStatusRaw = $db->table('orders')
-        //     ->select("LOWER(TRIM(status)) AS status, COUNT(*) AS total")
-        //     ->groupBy("status")
-        //     ->get()
-        //     ->getResultArray();
-
         $paymentStatusRaw = $db->table('orders')
-            ->select("LOWER(TRIM(status)) AS status, SUM(qty) AS total") // SUM qty agar grafik akurat
+            ->select("LOWER(TRIM(status)) AS status, SUM(qty) AS total")
             ->groupBy("status")
             ->get()
             ->getResultArray();
@@ -102,15 +101,12 @@ class Dashboard extends BaseController
                 $statusMap[$row['status']] = (int)$row['total'];
             }
         }
-
         $paymentStatusFormatted = [];
         foreach ($statusMap as $st => $tot) {
             $paymentStatusFormatted[] = ['status' => ucfirst($st), 'total' => $tot];
         }
 
-        // ==========================
         // 4. ORDER TERBARU
-        // ==========================
         $recentOrders = $this->orderModel
             ->select('orders.*, users.nama AS user_name, events.title AS event_name')
             ->join('users', 'users.id = orders.user_id', 'left')
@@ -119,56 +115,31 @@ class Dashboard extends BaseController
             ->limit(10)
             ->findAll();
 
-            // ==========================================
-            // 5. SELURUH EVENT (FIX: JOIN KE VENUES)
-            // ==========================================
-            $allEvents = $this->eventModel
-                ->select('events.*, venues.name as venue_name') // Sudah diubah dari 'nama' ke 'name'
-                ->join('venues', 'venues.id = events.venue_id', 'left')
-                ->orderBy('events.date', 'DESC')
-                ->findAll();
+        // 5. SELURUH EVENT
+        $allEvents = $this->eventModel
+            ->select('events.*, venues.name as venue_name')
+            ->join('venues', 'venues.id = events.venue_id', 'left')
+            ->orderBy('events.date', 'DESC')
+            ->findAll();
 
-            // ==========================
-            // 6. RINCIAN CHECK-IN PER EVENT & TIPE (FIXED QTY)
-            // ==========================
-            $checkinDetails = $db->table('checkins')
-                ->select('events.title as event_name, ticket_types.name as ticket_name, SUM(orders.qty) as total') // Ganti COUNT jadi SUM qty
-                ->join('orders', 'orders.id = checkins.order_id')
-                ->join('events', 'events.id = orders.event_id')
-                ->join('ticket_types', 'ticket_types.id = orders.ticket_type_id')
-                ->groupBy('events.id, ticket_types.id')
-                ->get()
-                ->getResultArray();
+        // 6. RINCIAN CHECK-IN
+        $checkinDetails = $db->table('checkins')
+            ->select('events.title as event_name, ticket_types.name as ticket_name, SUM(orders.qty) as total')
+            ->join('orders', 'orders.id = checkins.order_id')
+            ->join('events', 'events.id = orders.event_id')
+            ->join('ticket_types', 'ticket_types.id = orders.ticket_type_id')
+            ->groupBy('events.id, ticket_types.id')
+            ->get()->getResultArray();
 
-
-        // // ==========================
-        // // 6. RINCIAN CHECK-IN PER EVENT & TIPE
-        // // ==========================
-        // $checkinDetails = $db->table('checkins')
-        //     ->select('events.title as event_name, ticket_types.name as ticket_name, COUNT(checkins.id) as total')
-        //     ->join('orders', 'orders.id = checkins.order_id')
-        //     ->join('events', 'events.id = orders.event_id')
-        //     ->join('ticket_types', 'ticket_types.id = orders.ticket_type_id')
-        //     ->groupBy('events.id, ticket_types.id')
-        //     ->get()
-        //     ->getResultArray();
-
-            
-        // ==========================================
-        // 7. RINCIAN TIKET TERJUAL PER EVENT & TIPE
-        // ==========================================
+        // 7. RINCIAN TIKET TERJUAL
         $soldDetails = $db->table('orders')
             ->select('events.title as event_name, ticket_types.name as ticket_name, SUM(orders.qty) as total_sold')
             ->join('events', 'events.id = orders.event_id')
             ->join('ticket_types', 'ticket_types.id = orders.ticket_type_id')
-            ->where('orders.status', 'paid')
+            ->where('LOWER(TRIM(orders.status))', 'paid')
             ->groupBy('events.id, ticket_types.id')
-            ->get()
-            ->getResultArray();
+            ->get()->getResultArray();
 
-        // ==========================
-        // SEND DATA KE VIEW
-        // ==========================
         $data = [
             'totalEvents'      => $totalEvents,
             'totalUsers'       => $totalUsers,
