@@ -1,232 +1,223 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Laporan Transaksi - Admin Panel</title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
-    <style>
-        :root {
-            --bg-main: #0e1117;
-            --bg-sidebar: #111423;
-            --primary: #1f2a44;
-            --accent: #ffd54f;
-            --text-main: #ffffff;
-            --text-muted: #a1a6b3;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --hover-bg: rgba(255, 255, 255, 0.08);
-            --shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
-            --transition: all 0.35s ease;
-        }
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-main); overflow-x: hidden; }
+<style>
+    /* ================= GLOBAL & THEME VARIABLES ================= */
+    :root {
+        --primary: #4318FF;
+        --primary-glow: rgba(67, 24, 255, 0.15);
+        --secondary: #A3AED0;
+        --navy: #1B2559;
+        --white: #ffffff;
+        --danger: #EE5D50;
+        --success: #05CD99;
+        --warning: #FFB800;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-modern: 0px 40px 80px rgba(112, 144, 176, 0.12);
+    }
 
-        /* Background Video */
-        .bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; filter: brightness(0.65) saturate(0.9) blur(1.2px); pointer-events: none; }
-        body::after { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%), linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85)); z-index: -2; pointer-events: none; }
+    .content-modern {
+        position: relative;
+        padding: 40px 20px;
+        min-height: 100vh;
+        z-index: 1;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        /* Sidebar */
-        .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: linear-gradient(180deg, #111423, #0d101a); border-right: 1px solid var(--border-color); padding: 32px 24px; z-index: 1000; overflow-y: auto; }
-        .brand { font-size: 22px; font-weight: 700; color: var(--accent); text-align: center; margin-bottom: 42px; letter-spacing: 0.5px; }
-        .section-title { font-size: 11px; color: var(--text-muted); margin: 30px 0 12px; letter-spacing: 1.6px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 8px 0; transition: var(--transition); }
-        .section-title:hover { color: var(--accent); }
-        .submenu { display: none; margin-left: 16px; padding-left: 0; list-style: none; }
-        .submenu.open { display: block; }
-        .sidebar a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; font-size: 14px; color: var(--text-main); text-decoration: none; border-radius: 12px; transition: var(--transition); }
-        .sidebar a:hover { background: var(--hover-bg); transform: translateX(6px); }
-        .sidebar a.active { background: linear-gradient(135deg, #1f2a44, #2b3760); font-weight: 600; box-shadow: var(--shadow); }
+    /* ================= BACKGROUND & GLASS ================= */
+    .bg-video {
+        position: fixed; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; z-index: -2; filter: brightness(0.55);
+        pointer-events: none;
+    }
 
-        /* Content & Tables */
-        .content { margin-left: 260px; padding: 50px 60px; position: relative; z-index: 5; }
-        .page-title { font-size: 38px; font-weight: 700; display: flex; align-items: center; gap: 14px; text-shadow: 0 10px 40px rgba(0, 0, 0, 0.65); margin-bottom: 10px; }
-        .small-muted { color: var(--text-muted); margin-bottom: 36px; opacity: 0.85; font-size: 14px; }
-        .card-box { position: relative; background: linear-gradient(160deg, rgba(26, 31, 46, 0.88), rgba(20, 24, 38, 0.88)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 22px; padding: 30px; box-shadow: var(--shadow); transition: var(--transition); }
-        .table { background: transparent !important; color: #fff; margin-bottom: 0; }
-        .table thead th { background: rgba(255, 255, 255, 0.06); font-size: 11px; text-transform: uppercase; color: var(--text-muted); padding: 14px; border-bottom: 1px solid var(--border-color); }
-        .table tbody td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 14px; }
-        .search-box { background: rgba(17, 24, 41, 0.85); border: 1px solid var(--border-color); color: #fff; padding: 12px 16px; border-radius: 12px; width: 300px; font-size: 14px; transition: var(--transition); }
+    .glass-overlay {
+        position: fixed; inset: 0;
+        background: linear-gradient(135deg, rgba(244, 247, 254, 0.85), rgba(244, 247, 254, 0.95));
+        z-index: -1; backdrop-filter: blur(12px);
+    }
 
-        /* Status Badges - Refund Specific */
-        .status-badge { padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-        .status-pending { background: rgba(255, 213, 79, 0.2); color: #ffd54f; }
-        .status-approved { background: rgba(0, 123, 255, 0.2); color: #007bff; }
-        .status-refunded { background: rgba(40, 167, 69, 0.2); color: #28a745; }
-        .status-rejected { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+    /* ================= PAGE HEADER ================= */
+    .header-container { margin-bottom: 35px; }
+    .page-title-modern {
+        font-size: 36px; font-weight: 850; color: var(--navy);
+        letter-spacing: -1.5px; display: flex; align-items: center; gap: 15px;
+    }
+    .page-title-modern i { color: var(--primary); }
+    .sub-title {
+        color: var(--secondary); font-weight: 700; font-size: 14px;
+        text-transform: uppercase; letter-spacing: 1.5px;
+    }
 
-        /* Action Buttons */
-        .btn-action { width:32px; height:32px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; transition:var(--transition); border:none; color:#fff; text-decoration:none; }
-        .btn-check { background: rgba(40, 167, 69, 0.2); color: #28a745; }
-        .btn-check:hover { background: #28a745; color: #fff; }
-        .btn-x { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
-        .btn-x:hover { background: #dc3545; color: #fff; }
-        .btn-money { background: rgba(255, 213, 79, 0.2); color: #ffd54f; }
-        .btn-money:hover { background: #ffd54f; color: #000; }
-    </style>
-</head>
+    /* ================= CARD BOX ================= */
+    .card-box-modern {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--white);
+        border-radius: 30px;
+        padding: 35px;
+        box-shadow: var(--shadow-modern);
+    }
 
-<body>
+    /* ================= TABLE DESIGN ================= */
+    .table-modern { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+    .table-modern thead th {
+        color: var(--secondary); font-weight: 800; text-transform: uppercase;
+        font-size: 11px; padding: 15px 20px; border: none;
+    }
+    .table-modern tbody tr { background: var(--white); transition: var(--transition); }
+    .table-modern tbody td { padding: 18px 20px; border: none; vertical-align: middle; font-weight: 600; color: var(--navy); }
+    .table-modern tbody td:first-child { border-radius: 20px 0 0 20px; }
+    .table-modern tbody td:last-child { border-radius: 0 20px 20px 0; }
+
+    /* ================= STATUS PILLS ================= */
+    .status-pill {
+        padding: 6px 14px; border-radius: 10px; font-size: 10px;
+        font-weight: 800; text-transform: uppercase; display: inline-block;
+    }
+    .status-pending { background: #FFF9E6; color: var(--warning); }
+    .status-approved { background: #E1F5FE; color: #03A9F4; }
+    .status-refunded { background: #E6FFF5; color: var(--success); }
+    .status-rejected { background: #FEECEB; color: var(--danger); }
+
+    /* ================= ACTION BUTTONS ================= */
+    .btn-action-group { display: flex; gap: 8px; justify-content: center; }
+    .btn-circle {
+        width: 38px; height: 38px; border-radius: 12px; display: flex;
+        align-items: center; justify-content: center; transition: var(--transition);
+        border: none; text-decoration: none; font-size: 14px;
+    }
+    .btn-approve { background: #E6FFF5; color: var(--success); }
+    .btn-approve:hover { background: var(--success); color: white; transform: translateY(-3px); }
+    
+    .btn-reject { background: #FEECEB; color: var(--danger); }
+    .btn-reject:hover { background: var(--danger); color: white; transform: translateY(-3px); }
+    
+    .btn-pay { background: #FFF9E6; color: var(--warning); }
+    .btn-pay:hover { background: var(--warning); color: white; transform: translateY(-3px); }
+
+    /* ================= SEARCH BOX ================= */
+    .search-input-modern {
+        width: 300px; background: #F4F7FE; border: 2px solid transparent;
+        padding: 12px 20px 12px 45px; border-radius: 15px;
+        font-weight: 600; color: var(--navy); transition: var(--transition);
+    }
+    .search-input-modern:focus { background: var(--white); border-color: var(--primary); outline: none; }
+</style>
 
 <video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
-
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
-        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds" class="active"><i class="fas fa-rotate-left"></i> Refunds</a></li>
-    </ul>
-</div>
-
-<div class="content">
-
-    <div class="page-title">
-        <i class="fas fa-rotate-left"></i> Refunds
-    </div>
-    <p class="small-muted">Kelola permintaan pengembalian dana dan stok tiket secara manual.</p>
-
-    <div class="card-box">
-        <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success" style="background: rgba(40, 167, 69, 0.2); color: #28a745; border: none; border-radius: 12px;"><?= session()->getFlashdata('success') ?></div>
-        <?php endif; ?>
-        <?php if (session()->getFlashdata('error')) : ?>
-            <div class="alert alert-danger" style="background: rgba(220, 53, 69, 0.2); color: #dc3545; border: none; border-radius: 12px;"><?= session()->getFlashdata('error') ?></div>
-        <?php endif; ?>
-
-        <div class="top-actions" style="display: flex; justify-content: flex-end; margin-bottom: 25px;">
-            <form method="get">
-                <input type="text" class="search-box" name="keyword" 
-                       placeholder="Cari Order ID atau User..." value="<?= esc($keyword ?? '') ?>">
-            </form>
+<div class="content-modern">
+    <div class="container-fluid">
+        
+        <div class="header-container">
+            <p class="sub-title">Finance & Claims</p>
+            <h1 class="page-title-modern">
+                <i class="fas fa-rotate-left"></i> Refunds Management
+            </h1>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th width="50">#</th>
-                        <th>User</th>
-                        <th>Order Detail</th>
-                        <th>Alasan</th>
-                        <th>Nominal Refund</th>
-                        <th class="text-center">Status</th>
-                        <th>Tanggal</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (empty($refunds)) : ?>
-                    <tr>
-                        <td colspan="8" class="text-center text-secondary">Tidak ada data pengajuan refund.</td>
-                    </tr>
-                <?php else : ?>
-                    <?php $no = 1 + ($perPage * ($page - 1)); foreach ($refunds as $r) : ?>
-                    <tr>
-                        <td><?= $no++ ?></td>
-                        <td>
-                            <span class="fw-bold text-white"><?= esc($r['customer_name']) ?></span><br>
-                            <small class="text-muted">ID: #<?= esc($r['order_id']) ?></small>
-                        </td>
-                        <td>
-                            <span style="color:var(--accent); font-size:13px;">Qty: <?= $r['order_qty'] ?> Tiket</span><br>
-                            <small class="text-muted">Order Status: <?= $r['order_status'] ?></small>
-                        </td>
-                        <td>
-                            <small class="text-white" title="<?= esc($r['reason']) ?>">
-                                <?= mb_strimwidth(esc($r['reason']), 0, 30, "...") ?>
-                            </small>
-                        </td>
-                        <td>
-                            <span class="fw-bold text-white">Rp <?= number_format($r['refund_amount'] ?? $r['total_price'], 0, ',', '.') ?></span>
-                        </td>
-                        <td class="text-center">
-                            <span class="status-badge status-<?= $r['status'] ?>">
-                                <?= $r['status'] ?>
-                            </span>
-                        </td>
-                        <td>
-                            <small class="text-white"><?= date('d/m/Y', strtotime($r['created_at'])) ?></small><br>
-                            <small class="text-muted"><?= date('H:i', strtotime($r['created_at'])) ?></small>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex gap-2 justify-content-center">
-                                <?php if($r['status'] === 'pending'): ?>
-                                    <a href="/admin/transactions/refunds/approve/<?= $r['id'] ?>" class="btn-action btn-check" title="Approve" onclick="return confirm('Setujui refund ini?')">
-                                        <i class="fas fa-check"></i>
-                                    </a>
-                                    <a href="/admin/transactions/refunds/reject/<?= $r['id'] ?>" class="btn-action btn-x" title="Reject" onclick="return confirm('Tolak refund ini?')">
-                                        <i class="fas fa-times"></i>
-                                    </a>
-                                <?php elseif($r['status'] === 'approved'): ?>
-                                    <a href="/admin/transactions/refunds/refunded/<?= $r['id'] ?>" class="btn-action btn-money" title="Tandai Sudah Transfer" onclick="return confirm('Pastikan dana sudah ditransfer manual. Lanjutkan?')">
-                                        <i class="fas fa-wallet"></i>
-                                    </a>
-                                <?php else: ?>
-                                    <i class="fas fa-lock text-muted" title="Selesai"></i>
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach ?>
-                <?php endif ?>
-                </tbody>
-            </table>
-        </div>
+        <div class="card-box-modern">
+            <?php if (session()->getFlashdata('success')) : ?>
+                <div class="alert alert-success border-0 mb-4 shadow-sm" style="border-radius: 15px; background: #D1FAE5; color: #065F46;">
+                    <i class="fas fa-check-circle me-2"></i> <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
 
-        <div class="mt-4">
-            <?= $pager->links('refunds','default_full') ?>
-        </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0" style="color: var(--navy)">Request List</h5>
+                <form method="get" style="position: relative;">
+                    <i class="fas fa-search" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--secondary);"></i>
+                    <input type="text" class="search-input-modern" name="keyword" 
+                           placeholder="Search Order ID or User..." value="<?= esc($keyword ?? '') ?>">
+                </form>
+            </div>
 
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th width="50">#</th>
+                            <th>Customer</th>
+                            <th>Order Detail</th>
+                            <th>Reason</th>
+                            <th>Amount</th>
+                            <th class="text-center">Status</th>
+                            <th>Requested At</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($refunds)) : ?>
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-secondary fw-bold">No refund requests found.</td>
+                            </tr>
+                        <?php else : ?>
+                            <?php $no = 1; foreach ($refunds as $r) : ?>
+                            <tr>
+                                <td class="text-secondary">#<?= $no++ ?></td>
+                                <td>
+                                    <div class="fw-bold"><?= esc($r['customer_name']) ?></div>
+                                    <small class="text-secondary">ID: #<?= esc($r['order_id']) ?></small>
+                                </td>
+                                <td>
+                                    <div class="badge bg-light text-dark mb-1" style="font-size: 10px;"><?= $r['order_qty'] ?> Tickets</div>
+                                    <br><small class="text-secondary"><?= strtoupper($r['order_status']) ?></small>
+                                </td>
+                                <td>
+                                    <div style="font-size: 12px; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" 
+                                         title="<?= esc($r['reason']) ?>">
+                                        <?= esc($r['reason']) ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-bold" style="color: var(--navy);">
+                                        Rp <?= number_format($r['refund_amount'] ?? $r['total_price'], 0, ',', '.') ?>
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="status-pill status-<?= strtolower($r['status']) ?>">
+                                        <?= $r['status'] ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="font-size: 13px;"><?= date('d/m/Y', strtotime($r['created_at'])) ?></div>
+                                    <small class="text-secondary"><?= date('H:i', strtotime($r['created_at'])) ?> WIB</small>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-action-group">
+                                        <?php if($r['status'] === 'pending'): ?>
+                                            <a href="/admin/transactions/refunds/approve/<?= $r['id'] ?>" class="btn-circle btn-approve" title="Approve" onclick="return confirm('Approve this refund request?')">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            <a href="/admin/transactions/refunds/reject/<?= $r['id'] ?>" class="btn-circle btn-reject" title="Reject" onclick="return confirm('Reject this refund request?')">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        <?php elseif($r['status'] === 'approved'): ?>
+                                            <a href="/admin/transactions/refunds/refunded/<?= $r['id'] ?>" class="btn-circle btn-pay" title="Mark as Disbursed" onclick="return confirm('Confirm that funds have been manually transferred?')">
+                                                <i class="fas fa-hand-holding-dollar"></i>
+                                            </a>
+                                        <?php else: ?>
+                                            <i class="fas fa-lock text-light" style="font-size: 18px;"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach ?>
+                        <?php endif ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-center">
+                <?= $pager->links('refunds','default_full') ?>
+            </div>
+        </div>
     </div>
 </div>
 
-<script>
-function toggleSubmenu(element) {
-    const submenu = element.nextElementSibling;
-    const icon = element.querySelector('i.fa-chevron-down');
-    if (submenu.classList.contains('open')) {
-        submenu.classList.remove('open');
-        icon.style.transform = 'rotate(0deg)';
-    } else {
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const activeLink = document.querySelector('.submenu a.active');
-    if (activeLink) {
-        const submenu = activeLink.closest('.submenu');
-        const sectionTitle = submenu.previousElementSibling;
-        const icon = sectionTitle.querySelector('i.fa-chevron-down');
-        submenu.classList.add('open');
-        if (icon) icon.style.transform = 'rotate(180deg)';
-    }
-});
-</script>
-
-</body>
-</html>
+<?= $this->endSection() ?>

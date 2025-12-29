@@ -1,286 +1,262 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title><?= $title ?></title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
-    <style>
-        /* ================= ROOT ================= */
-        :root {
-            --bg-main: #0d0f18;
-            --bg-sidebar: #111423;
-            --bg-card: #1a1f2e;
-            --primary: #1b2b52;
-            --accent: #ffd54f;
-            --text-main: #e9ecf6;
-            --text-muted: #9aa5c3;
-            --border-color: rgba(255, 255, 255, 0.05);
-            --hover-bg: rgba(255, 255, 255, 0.06);
-            --shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
-            --transition: all 0.25s ease;
-        }
+<style>
+    /* ================= THEME VARIABLES ================= */
+    :root {
+        --primary: #4318FF;
+        --navy: #1B2559;
+        --secondary: #A3AED0;
+        --white: #ffffff;
+        --success: #05CD99;
+        --warning: #FFB800;
+        --bg-soft: #F4F7FE;
+        --shadow-modern: 0px 40px 80px rgba(112, 144, 176, 0.12);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        * { box-sizing: border-box; }
+    .content-modern {
+        padding: 40px 20px;
+        position: relative;
+        z-index: 1;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--text-main);
-            margin: 0;
-            line-height: 1.6;
-            background: var(--bg-main);
-            overflow-x: hidden;
-        }
+    /* ================= BACKGROUND ================= */
+    .bg-video {
+        position: fixed; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; z-index: -2; filter: brightness(0.5);
+    }
+    .glass-overlay {
+        position: fixed; inset: 0;
+        background: linear-gradient(135deg, rgba(244, 247, 254, 0.9), rgba(244, 247, 254, 0.95));
+        z-index: -1; backdrop-filter: blur(10px);
+    }
 
-        /* ================= BACKGROUND VIDEO ================= */
-        .bg-video {
-            position: fixed; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -3;
-            filter: brightness(0.65) saturate(0.9) blur(1.2px);
-            pointer-events: none;
-        }
+    /* ================= SUMMARY CARDS ================= */
+    .summary-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: var(--shadow-modern);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .summary-card:hover { transform: translateY(-5px); }
+    .icon-box {
+        width: 56px; height: 56px; border-radius: 15px;
+        display: grid; place-items: center; font-size: 24px;
+    }
 
-        body::after {
-            content: ""; position: fixed; inset: 0;
-            background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
-                        linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85));
-            z-index: -2; pointer-events: none;
-        }
+    /* ================= FILTER BOX (Fixed Spacing & Smaller Button) ================= */
+    .filter-card-modern {
+        background: var(--white);
+        border-radius: 25px;
+        padding: 30px;
+        margin-bottom: 35px;
+        box-shadow: var(--shadow-modern);
+        border: 1px solid var(--white);
+    }
+    .filter-group-modern {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .filter-label-modern {
+        font-size: 11px; 
+        font-weight: 800; 
+        color: var(--secondary);
+        text-transform: uppercase; 
+        letter-spacing: 1px;
+    }
+    .input-modern {
+        background: var(--bg-soft); 
+        border: 2px solid transparent;
+        border-radius: 14px; 
+        padding: 10px 16px; 
+        font-weight: 600;
+        color: var(--navy); 
+        transition: var(--transition);
+        width: 160px; /* Ukuran input diperkecil agar tidak menempel */
+    }
+    .input-modern:focus { 
+        border-color: var(--primary); 
+        outline: none; 
+        background: #fff;
+    }
 
-        /* ================= SIDEBAR ================= */
-        .sidebar {
-            position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-            background: linear-gradient(180deg, #111423, #0d101a);
-            border-right: 1px solid var(--border-color);
-            padding: 32px 24px; z-index: 1000; overflow-y: auto;
-        }
+    /* ================= TABLE DESIGN ================= */
+    .report-table-card {
+        background: var(--white); border-radius: 30px;
+        padding: 20px; box-shadow: var(--shadow-modern);
+    }
+    .table-modern { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+    .table-modern thead th {
+        color: var(--secondary); font-weight: 700; text-transform: uppercase;
+        font-size: 11px; padding: 15px; border: none;
+    }
+    .table-modern tbody tr { transition: var(--transition); cursor: default; }
+    .table-modern tbody tr:hover { transform: scale(1.005); }
+    .table-modern tbody td { 
+        padding: 15px; background: #F8FAFF; border: none; 
+        font-weight: 600; color: var(--navy); font-size: 13px;
+    }
+    .table-modern tbody td:first-child { border-radius: 15px 0 0 15px; }
+    .table-modern tbody td:last-child { border-radius: 0 15px 15px 0; }
 
-        .brand {
-            font-size: 22px; font-weight: 700; color: var(--accent);
-            text-align: center; margin-bottom: 42px; letter-spacing: 0.5px;
-        }
-
-        .section-title {
-            font-size: 11px; color: var(--text-muted); margin: 30px 0 12px;
-            letter-spacing: 1.6px; text-transform: uppercase; cursor: pointer;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 0; transition: var(--transition);
-        }
-
-        .section-title:hover { color: var(--accent); }
-
-        .submenu { display: none; margin-left: 16px; padding-left: 0; list-style: none; }
-        .submenu.open { display: block; }
-
-        .sidebar a {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-            margin-bottom: 10px; font-size: 14px; color: var(--text-main);
-            text-decoration: none; border-radius: 12px; transition: var(--transition);
-        }
-
-        .sidebar a:hover { background: var(--hover-bg); transform: translateX(6px); }
-        .sidebar a.active { background: linear-gradient(135deg, #1f2a44, #2b3760); font-weight: 600; box-shadow: var(--shadow); }
-
-        /* ================= CONTENT ================= */
-        .content { margin-left: 260px; padding: 50px 60px; min-height: 100vh; }
-
-        .dashboard-header { display: flex; align-items: center; gap: 18px; margin-bottom: 42px; }
-
-        .dash-icon {
-            width: 64px; height: 64px; display: grid; place-items: center;
-            font-size: 28px; border-radius: 18px;
-            background: linear-gradient(135deg, #1f2a44, #2b3760); box-shadow: var(--shadow);
-        }
-
-        .dash-text h1 { margin: 0; font-weight: 700; }
-        .dash-text p { margin: 4px 0 0; color: var(--text-muted); }
-
-        /* ================= CARD & FILTER ================= */
-        .card-box {
-            background: linear-gradient(160deg, #1a1f2e, #141826);
-            border: 1px solid var(--border-color); box-shadow: var(--shadow);
-            padding: 30px; border-radius: 22px; margin-bottom: 26px;
-        }
-
-        .filter-fieldset {
-            border: 1px solid rgba(255,255,255,0.1); padding: 15px;
-            border-radius: 12px; position: relative; margin-bottom: 20px;
-        }
-
-        .filter-legend {
-            position: absolute; top: -12px; left: 15px; background: #1a1f2e;
-            padding: 0 10px; font-size: 11px; font-weight: 600; color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .filter-input {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color);
-            color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 13px;
-        }
-
-        /* ================= TABLE ================= */
-        .table-custom { width: 100%; border-collapse: collapse; }
-        .table-custom thead th {
-            background: rgba(255, 255, 255, 0.06); color: var(--text-muted);
-            padding: 14px; font-size: 11px; text-transform: uppercase;
-            letter-spacing: 0.7px; border-bottom: 1px solid var(--border-color);
-        }
-        .table-custom tbody td {
-            padding: 16px 14px; border-bottom: 1px solid var(--border-color);
-            font-size: 13px; color: var(--text-main); vertical-align: middle;
-        }
-        .table-custom tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
-
-        /* ================= BUTTONS ================= */
-        .btn-custom { border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 13px; transition: 0.3s; }
-        .btn-filter { background: #1f8f55; color: white; }
-        .btn-pdf { background: var(--accent); color: #000; }
-        .btn-excel { background: #1e6091; color: white; }
-        .btn-filter:hover, .btn-pdf:hover, .btn-excel:hover { opacity: 0.8; transform: translateY(-2px); }
-
-        /* Style Waktu Transaksi */
-        .badge-waktu {
-            background: rgba(255, 255, 255, 0.08); padding: 6px 12px;
-            border-radius: 8px; color: var(--text-main); font-size: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1); display: inline-block;
-        }
-
-        @media (max-width: 768px) {
-            .bg-video { display: none; }
-            .sidebar { position: relative; width: 100%; height: auto; padding: 20px; }
-            .content { margin-left: 0; padding: 32px 22px; }
-        }
-    </style>
-</head>
-<body>
+    /* ================= BUTTONS ================= */
+    .btn-action {
+        padding: 10px 20px; border-radius: 14px; font-weight: 700;
+        font-size: 13px; border: none; transition: var(--transition);
+        display: inline-flex; align-items: center; gap: 8px;
+        text-decoration: none;
+    }
+    .btn-primary-m { background: var(--primary); color: white; }
+    .btn-pdf-m { background: #EE5D50; color: white; }
+    .btn-excel-m { background: #05CD99; color: white; }
+    .btn-action:hover { opacity: 0.9; transform: translateY(-2px); color: white; }
+    
+    /* Tombol Apply khusus yang lebih kecil */
+    .btn-apply-small {
+        padding: 12px 25px;
+        width: auto;
+        min-width: 150px;
+    }
+</style>
 
 <video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
-
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">MASTERS <i class="fas fa-chevron-down"></i></div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
-        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">TRANSAKSI <i class="fas fa-chevron-down"></i></div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds"><i class="fas fa-rotate-left"></i> Refunds</a></li>
-    </ul>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">LAPORAN <i class="fas fa-chevron-down"></i></div>
-    <ul class="submenu open">
-        <li><a href="/admin/laporan/harian" class="active"><i class="fas fa-file-invoice-dollar"></i> Laporan Harian</a></li>
-        <li><a href="/admin/laporan/bulanan"><i class="fas fa-chart-line"></i> Laporan Bulanan</a></li>
-    </ul>
-</div>
-
-<div class="content">
-    <div class="dashboard-header">
-        <div class="dash-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-        <div class="dash-text">
-            <h1>Laporan Penjualan</h1>
-            <p><?= $periode ?></p>
+<div class="content-modern">
+    <div class="container-fluid">
+        
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="fw-800 mb-1" style="color: var(--navy); letter-spacing: -1.5px;">Sales Report</h1>
+                <p class="text-secondary fw-bold mb-0"><i class="far fa-calendar-alt me-2"></i><?= $periode ?></p>
+            </div>
+            <div class="d-flex gap-3">
+                <a href="<?= base_url('admin/laporan/harian/exportPdf?' . http_build_query($filter)) ?>" 
+                   target="_blank" 
+                   class="btn-action btn-pdf-m">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </a>
+                <a href="<?= base_url('admin/laporan/harian/exportExcel?' . http_build_query($filter)) ?>" class="btn-action btn-excel-m">
+                    <i class="fas fa-file-excel"></i> EXCEL
+                </a>
+            </div>
         </div>
-    </div>
 
-    <div class="card-box">
-        <form method="get" action="">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="filter-fieldset">
-                        <span class="filter-legend">Filter Range Hari</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="date" name="tgl_awal" class="filter-input w-100" value="<?= $filter['tgl_awal'] ?>">
-                            <span class="small text-muted">sd</span>
-                            <input type="date" name="tgl_akhir" class="filter-input w-100" value="<?= $filter['tgl_akhir'] ?>">
-                        </div>
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="summary-card">
+                    <div class="icon-box" style="background: #E7E9FB; color: var(--primary);">
+                        <i class="fas fa-wallet"></i>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="filter-fieldset">
-                        <span class="filter-legend">Filter Range Bulan</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="month" name="bln_awal" class="filter-input w-100" value="<?= $filter['bln_awal'] ?>">
-                            <span class="small text-muted">sd</span>
-                            <input type="month" name="bln_akhir" class="filter-input w-100" value="<?= $filter['bln_akhir'] ?>">
-                        </div>
+                    <div>
+                        <span class="filter-label-modern" style="display:block;">Total Omzet</span>
+                        <h3 class="fw-800 mb-0" style="color: var(--navy);">Rp <?= number_format(array_sum(array_column($transaksi, 'total')), 0, ',', '.') ?></h3>
                     </div>
                 </div>
             </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn-custom btn-filter">Filter Data</button>
-                <a href="<?= base_url('admin/laporan/harian/exportPdf?' . http_build_query($filter)) ?>" target="_blank" class="btn-custom btn-pdf text-decoration-none text-center">Export PDF</a>
-                <a href="<?= base_url('admin/laporan/harian/exportExcel?' . http_build_query($filter)) ?>" class="btn-custom btn-excel text-decoration-none text-center">Export Excel</a>
+            <div class="col-md-4">
+                <div class="summary-card">
+                    <div class="icon-box" style="background: #E6FFF5; color: var(--success);">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div>
+                        <span class="filter-label-modern" style="display:block;">Tiket Terjual</span>
+                        <h3 class="fw-800 mb-0" style="color: var(--navy);"><?= array_sum(array_column($transaksi, 'qty')) ?> <small style="font-size: 14px;">pcs</small></h3>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
+            <div class="col-md-4">
+                <div class="summary-card">
+                    <div class="icon-box" style="background: #FFF9E6; color: var(--warning);">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div>
+                        <span class="filter-label-modern" style="display:block;">Total Transaksi</span>
+                        <h3 class="fw-800 mb-0" style="color: var(--navy);"><?= count($transaksi) ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="card-box p-0 overflow-hidden">
-        <div class="table-responsive">
-            <table class="table-custom">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Kode</th>
-                        <th>User</th>
-                        <th>Event</th>
-                        <th>Jenis Tiket</th>
-                        <th class="text-center">QTY</th>
-                        <th class="text-end">Total</th>
-                        <th class="text-center">Waktu Transaksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if(!empty($transaksi)): $no=1; foreach($transaksi as $t): ?>
-                    <tr>
-                        <td><?= $no++ ?></td>
-                        <td class="fw-bold" style="color: var(--accent);">TRX-<?= $t['kode'] ?></td>
-                        <td><?= $t['user'] ?? 'Guest' ?></td>
-                        <td><?= $t['event'] ?></td>
-                        <td><span class="badge" style="background: rgba(30,96,145,0.3); color: #fff; border: 1px solid #1e6091;"><?= $t['paket'] ?></span></td>
-                        <td class="text-center"><?= $t['qty'] ?></td>
-                        <td class="text-end fw-bold">Rp <?= number_format($t['total'], 0, ',', '.') ?></td>
-                        <td class="text-center">
-                            <span class="badge-waktu">
-                                <i class="fa-regular fa-clock me-1 text-warning"></i> <?= date('d/m/Y H:i', strtotime($t['created_at'])) ?>
-                            </span>
-                        </td>
-                    </tr>
-                    <?php endforeach; else: ?>
-                    <tr><td colspan="8" class="text-center py-5 text-muted">Tidak ada transaksi ditemukan.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+        <div class="filter-card-modern">
+            <form method="get">
+                <div class="d-flex align-items-end flex-wrap gap-5"> <div class="filter-group-modern">
+                        <label class="filter-label-modern">Range Tanggal</label>
+                        <div class="d-flex gap-3">
+                            <input type="date" name="tgl_awal" class="input-modern" value="<?= $filter['tgl_awal'] ?>">
+                            <input type="date" name="tgl_akhir" class="input-modern" value="<?= $filter['tgl_akhir'] ?>">
+                        </div>
+                    </div>
+
+                    <div class="filter-group-modern">
+                        <label class="filter-label-modern">Range Bulan</label>
+                        <div class="d-flex gap-3">
+                            <input type="month" name="bln_awal" class="input-modern" value="<?= $filter['bln_awal'] ?>">
+                            <input type="month" name="bln_akhir" class="input-modern" value="<?= $filter['bln_akhir'] ?>">
+                        </div>
+                    </div>
+
+                    <div class="ms-auto"> <button type="submit" class="btn-action btn-primary-m btn-apply-small">
+                            <i class="fas fa-filter"></i> Apply Filter
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <div class="report-table-card">
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th width="50">No</th>
+                            <th>Transaction Code</th>
+                            <th>Customer</th>
+                            <th>Event & Type</th>
+                            <th class="text-center">QTY</th>
+                            <th class="text-end">Total Amount</th>
+                            <th class="text-center">Transaction Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(!empty($transaksi)): $no=1; foreach($transaksi as $t): ?>
+                        <tr>
+                            <td class="text-secondary"><?= $no++ ?></td>
+                            <td style="color: var(--primary); font-weight: 800;">TRX-<?= $t['kode'] ?></td>
+                            <td><?= $t['user'] ?? 'Guest' ?></td>
+                            <td>
+                                <div class="fw-bold"><?= $t['event'] ?></div>
+                                <small class="text-secondary"><?= $t['paket'] ?></small>
+                            </td>
+                            <td class="text-center"><?= $t['qty'] ?></td>
+                            <td class="text-end fw-bold">Rp <?= number_format($t['total'], 0, ',', '.') ?></td>
+                            <td class="text-center">
+                                <span style="font-size: 12px; color: var(--secondary);">
+                                    <?= date('d M Y', strtotime($t['created_at'])) ?><br>
+                                    <small><?= date('H:i', strtotime($t['created_at'])) ?> WIB</small>
+                                </span>
+                            </td>
+                        </tr>
+                        <?php endforeach; else: ?>
+                        <tr><td colspan="7" class="text-center py-5 text-secondary fw-bold">No transaction data found for this period.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<script>
-function toggleSubmenu(element) {
-    const submenu = element.nextElementSibling;
-    const icon = element.querySelector('i');
-    submenu.classList.toggle('open');
-    if (submenu.classList.contains('open')) icon.style.transform = 'rotate(180deg)';
-    else icon.style.transform = 'rotate(0deg)';
-}
-</script>
-</body>
-</html>
+<?= $this->endSection() ?>

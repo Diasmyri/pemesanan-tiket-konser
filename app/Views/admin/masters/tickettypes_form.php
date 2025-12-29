@@ -1,497 +1,270 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title><?= $title ?></title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
-    <style>
-        /* ================= ROOT ================= */
-        :root {
-            --bg-main: #0d0f18;
-            --bg-sidebar: #111423;
-            --primary: #1b2b52;
-            --accent: #ffd54f;
-            --text-main: #e9ecf6;
-            --text-muted: #9aa5c3;
-            --border-color: rgba(255, 255, 255, 0.05);
-            --hover-bg: rgba(255, 255, 255, 0.06);
-            --shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
-            --transition: all 0.25s ease;
-        }
+<style>
+    /* ================= GLOBAL & THEME VARIABLES ================= */
+    :root {
+        --primary: #4318FF;
+        --primary-glow: rgba(67, 24, 255, 0.25);
+        --secondary: #A3AED0;
+        --navy: #1B2559;
+        --bg-body: #F4F7FE;
+        --white: #ffffff;
+        --border-color: #E0E5F2;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    .content-modern {
+        position: relative;
+        padding: 40px 20px;
+        min-height: 100vh;
+        z-index: 1;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-main);
-            color: var(--text-main);
-            margin: 0;
-        }
+    /* ================= BACKGROUND & OVERLAY ================= */
+    .bg-video {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+        filter: brightness(0.6);
+        pointer-events: none;
+    }
 
-        /* ================= BACKGROUND VIDEO ================= */
-        .bg-video {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -3;
-            filter: brightness(0.65) saturate(0.9) blur(1.2px);
-            pointer-events: none;
-        }
+    .glass-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(244, 247, 254, 0.88);
+        z-index: -1;
+        backdrop-filter: blur(12px);
+    }
 
-        /* GLOBAL OVERLAY (LEMBUT BIAR VIDEO KELIATAN) */
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
-                linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85));
-            z-index: -2;
-            pointer-events: none;
-        }
+    /* ================= BACK BUTTON ================= */
+    .btn-back-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        background: var(--white);
+        border-radius: 16px;
+        color: var(--navy);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 12px rgba(112, 144, 176, 0.08);
+        transition: var(--transition);
+        margin-bottom: 30px;
+    }
 
-         /* ================= SIDEBAR ================= */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            background: linear-gradient(180deg, #111423, #0d101a);
-            border-right: 1px solid var(--border-color);
-            padding: 32px 24px;
-            z-index: 1000;
-            overflow-y: auto;
-        }
+    .btn-back-modern i { color: var(--primary); }
+    .btn-back-modern:hover {
+        transform: translateX(-5px);
+        background: var(--navy);
+        color: #fff;
+    }
 
-        .brand {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 42px;
-            letter-spacing: 0.5px;
-        }
+    /* ================= CARD FORM ================= */
+    .card-form-premium {
+        background: var(--white);
+        border-radius: 35px;
+        padding: 50px;
+        box-shadow: 0px 40px 80px rgba(112, 144, 176, 0.15);
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+    }
 
-        .section-title {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin: 30px 0 12px;
-            letter-spacing: 1.6px;
-            text-transform: uppercase;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            transition: var(--transition);
-        }
+    .page-icon-wrapper {
+        width: 65px;
+        height: 65px;
+        background: var(--primary-glow);
+        color: var(--primary);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin: 0 auto 20px;
+    }
 
-        .section-title:hover {
-            color: var(--accent);
-        }
+    /* ================= INPUT STYLES ================= */
+    .form-label-modern {
+        font-weight: 800;
+        color: var(--navy);
+        font-size: 13px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        display: block;
+        letter-spacing: 0.5px;
+    }
 
-        .section-title i {
-            transition: var(--transition);
-        }
+    .input-custom, .select-custom {
+        background: #F4F7FE !important;
+        border: 2px solid transparent !important;
+        border-radius: 20px !important;
+        padding: 14px 22px !important;
+        font-weight: 600 !important;
+        color: var(--navy) !important;
+        transition: var(--transition) !important;
+        height: auto !important;
+    }
 
-        .submenu {
-            display: none;
-            margin-left: 16px;
-            padding-left: 0;
-            list-style: none;
-        }
+    .input-custom:focus, .select-custom:focus {
+        background: var(--white) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 10px 25px var(--primary-glow) !important;
+        outline: none !important;
+    }
 
-        .submenu.open {
-            display: block;
-        }
+    /* ================= ACTION BUTTONS ================= */
+    .button-group-modern {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 40px;
+    }
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: var(--text-main);
-            text-decoration: none;
-            border-radius: 12px;
-            transition: var(--transition);
-        }
+    .btn-cancel-modern {
+        background: #F4F7FE;
+        color: var(--navy);
+        padding: 14px 30px;
+        border-radius: 18px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+        transition: var(--transition);
+    }
 
-        .sidebar a:hover {
-            background: var(--hover-bg);
-            transform: translateX(6px);
-        }
+    .btn-save-modern {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 22px;
+        padding: 14px 35px;
+        font-weight: 700;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 10px 20px var(--primary-glow);
+        transition: var(--transition);
+    }
 
-        .sidebar a.active {
-            background: linear-gradient(135deg, #1f2a44, #2b3760);
-            font-weight: 600;
-            box-shadow: var(--shadow);
-        }
+    .btn-save-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px var(--primary-glow);
+        filter: brightness(1.1);
+    }
 
-        /* ================= CONTENT ================= */
-        .content {
-            margin-left: 240px;
-            padding: 40px 45px;
-        }
+    .input-group-text-modern {
+        background: #F4F7FE;
+        border: none;
+        border-radius: 20px 0 0 20px;
+        color: var(--navy);
+        font-weight: 700;
+        padding-left: 20px;
+    }
 
-        /* ================= TITLE ================= */
-        .page-title {
-            text-align: center;
-            font-size: 34px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-        }
+    .has-prefix .input-custom {
+        border-radius: 0 20px 20px 0 !important;
+    }
+</style>
 
-        .small-muted {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 15px;
-            margin-bottom: 28px;
-        }
-
-        /* ================= CARD ================= */
-        .card-box {
-            background: linear-gradient(160deg, rgba(30, 37, 58, 0.85), rgba(16, 19, 33, 0.85));
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            padding: 35px;
-            border-radius: 18px;
-            max-width: 900px;
-            margin: auto;
-        }
-
-        /* ================= FORM GROUP ================= */
-        .form-group {
-            position: relative;
-            margin-bottom: 24px;
-            animation: slideInUp 0.6s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .form-group:nth-child(1) { animation-delay: 0.1s; }
-        .form-group:nth-child(2) { animation-delay: 0.2s; }
-        .form-group:nth-child(3) { animation-delay: 0.3s; }
-        .form-group:nth-child(4) { animation-delay: 0.4s; }
-        .form-group:nth-child(5) { animation-delay: 0.5s; }
-        .form-group:nth-child(6) { animation-delay: 0.6s; }
-        .form-group:nth-child(7) { animation-delay: 0.7s; }
-        .form-actions { animation-delay: 0.8s; }
-
-        @keyframes slideInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        label {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #d9e2ff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        label i {
-            color: var(--accent);
-            font-size: 16px;
-        }
-
-        /* ================= FORM CONTROL ================= */
-        .form-control,
-        select.form-control {
-            width: 100%;
-            background: linear-gradient(135deg, #111829, #151d33);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #fff;
-            height: 50px;
-            border-radius: 12px;
-            padding: 0 16px;
-            transition: var(--transition);
-            font-size: 14px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-control:hover {
-            border-color: rgba(255, 213, 79, 0.3);
-            box-shadow: 0 0 8px rgba(255, 213, 79, 0.1);
-        }
-
-        .form-control:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 12px rgba(255, 213, 79, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(135deg, #151d33, #1a2138);
-            transform: translateY(-2px);
-            outline: none;
-        }
-
-        textarea.form-control {
-            height: 140px !important;
-            padding-top: 14px;
-            resize: vertical;
-        }
-
-        input[type="file"].form-control {
-            height: auto !important;
-            padding: 12px 16px;
-            cursor: pointer;
-        }
-
-        input[type="file"].form-control:hover {
-            background: linear-gradient(135deg, #151d33, #1a2138);
-        }
-
-        /* ================= PREVIEW ================= */
-        .preview-container {
-            margin-top: 16px;
-            text-align: center;
-        }
-
-        .preview-img {
-            border-radius: 12px;
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            display: block;
-            margin: 0 auto;
-        }
-
-        .preview-img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        /* ================= FORM ACTIONS ================= */
-        .form-actions {
-            text-align: center;
-            margin-top: 30px;
-            animation: slideInUp 0.6s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .btn-save {
-            background: linear-gradient(135deg, var(--primary), #2a3d6a);
-            padding: 14px 28px;
-            border-radius: 12px;
-            color: #fff;
-            border: none;
-            transition: var(--transition);
-            font-size: 16px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-save::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-save:hover {
-            background: linear-gradient(135deg, #223669, var(--primary));
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-        }
-
-        .btn-save:hover::before {
-            left: 100%;
-        }
-
-        .btn-save:active {
-            transform: translateY(-1px);
-        }
-
-        /* ================= RESPONSIVE ================= */
-        @media (max-width: 768px) {
-            .bg-video {
-                display: none;
-            }
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                padding: 20px;
-            }
-            .content {
-                margin-left: 0;
-                padding: 32px 22px;
-            }
-            .page-title {
-                font-size: 28px;
-                flex-direction: column;
-                gap: 10px;
-            }
-            .card-box {
-                padding: 20px;
-            }
-            .preview-img {
-                width: 150px;
-                height: 150px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<!-- BACKGROUND VIDEO -->
-<video autoplay muted loop playsinline class="bg-video"
-poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
+<video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
+<div class="content-modern">
+    <div class="container">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div class="card-form-premium">
+                <div class="text-center mb-5">
+                    <div class="page-icon-wrapper">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <p style="color: var(--secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; margin-bottom: 5px;">Inventory System</p>
+                    <h2 style="font-weight: 800; color: var(--navy); letter-spacing: -1px;"><?= $title ?></h2>
+                    <p class="text-muted small">Define ticket tiers, pricing strategy, and stock allocation.</p>
+                </div>
 
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
+                <form action="<?= $formAction ?>" method="post">
+                    <?= csrf_field() ?>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
-        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes" class="active"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
+                    <div class="mb-4">
+                        <label class="form-label-modern">Select Event</label>
+                        <select name="event_id" class="form-select select-custom" required>
+                            <option value="" disabled selected>-- Choose Associated Event --</option>
+                            <?php foreach ($events as $e): ?>
+                                <option value="<?= $e['id'] ?>"
+                                    <?= old('event_id', $ticket['event_id'] ?? '') == $e['id'] ? 'selected' : '' ?>>
+                                    <?= $e['title'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
-    </ul>
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label-modern">Ticket Tier Name</label>
+                            <input type="text" name="name" class="form-control input-custom"
+                                   value="<?= old('name', $ticket['name'] ?? '') ?>"
+                                   placeholder="e.g. VVIP Diamond, Festival A, Early Bird" required>
+                        </div>
 
-</div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label-modern">Base Price</label>
+                            <div class="input-group has-prefix">
+                                <span class="input-group-text input-group-text-modern">Rp</span>
+                                <input type="number" name="price" class="form-control input-custom"
+                                       value="<?= old('price', $ticket['price'] ?? '') ?>"
+                                       placeholder="0" required>
+                            </div>
+                        </div>
 
-<!-- CONTENT -->
-<div class="content">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label-modern">Stock Allocation</label>
+                            <div class="input-group has-prefix">
+                                <span class="input-group-text input-group-text-modern"><i class="fas fa-boxes"></i></span>
+                                <input type="number" name="stock" class="form-control input-custom"
+                                       value="<?= old('stock', $ticket['stock'] ?? '') ?>"
+                                       placeholder="Qty" required>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="page-title">
-        <i class="fas fa-ticket"></i> <?= $title ?>
-    </div>
-    <p class="small-muted">Isi data tipe tiket dengan lengkap.</p>
-
-    <div class="card-box">
-        <form action="<?= $formAction ?>" method="post" class="w-100">
-            <?= csrf_field() ?>
-
-            <div class="form-group mb-4">
-                <label for="event_id">
-                    <i class="fas fa-calendar"></i> Pilih Event
-                </label>
-                <select name="event_id" id="event_id" class="form-control" required>
-                    <option value="">-- Pilih Event --</option>
-                    <?php foreach ($events as $e): ?>
-                        <option value="<?= $e['id'] ?>"
-                            <?= old('event_id', $ticket['event_id'] ?? '') == $e['id'] ? 'selected' : '' ?>>
-                            <?= $e['title'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                    <div class="button-group-modern">
+                        <a href="/admin/masters/tickettypes" class="btn-cancel-modern">Cancel</a>
+                        <button type="submit" class="btn-save-modern">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group mb-4">
-                <label for="name">
-                    <i class="fas fa-tag"></i> Nama Tipe Tiket
-                </label>
-                <input type="text" name="name" id="name" class="form-control"
-                       value="<?= old('name', $ticket['name'] ?? '') ?>"
-                       placeholder="Contoh: VIP, Regular, Festival" required>
-            </div>
-
-            <div class="form-group mb-4">
-                <label for="price">
-                    <i class="fas fa-dollar-sign"></i> Harga Tiket
-                </label>
-                <input type="number" name="price" id="price" class="form-control"
-                       value="<?= old('price', $ticket['price'] ?? '') ?>"
-                       placeholder="Masukkan harga tiket..." required>
-            </div>
-
-            <div class="form-group mb-4">
-                <label for="stock">
-                    <i class="fas fa-boxes"></i> Stok Tiket
-                </label>
-                <input type="number" name="stock" id="stock" class="form-control"
-                       value="<?= old('stock', $ticket['stock'] ?? '') ?>"
-                       placeholder="Masukkan stok tiket..." required>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn-save">
-                    <i class="fas fa-save"></i> Simpan Tipe Tiket
-                </button>
-            </div>
-
-        </form>
+        </div>
     </div>
 </div>
 
 <script>
+// Sidebar Submenu Logic
 function toggleSubmenu(element) {
     const submenu = element.nextElementSibling;
-    const icon = element.querySelector('i');
-    
+    const icon = element.querySelector('i.fa-chevron-down');
     if (submenu.classList.contains('open')) {
         submenu.classList.remove('open');
-        icon.style.transform = 'rotate(0deg)';
+        if(icon) icon.style.transform = 'rotate(0deg)';
     } else {
         submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
+        if(icon) icon.style.transform = 'rotate(180deg)';
     }
 }
-
-// Auto-open submenu jika halaman aktif ada
-document.addEventListener('DOMContentLoaded', function() {
-    const activeLink = document.querySelector('.submenu a.active');
-    if (activeLink) {
-        const submenu = activeLink.closest('.submenu');
-        const sectionTitle = submenu.previousElementSibling;
-        const icon = sectionTitle.querySelector('i');
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
-});
 </script>
 
-</body>
-</html>
+<?= $this->endSection() ?>

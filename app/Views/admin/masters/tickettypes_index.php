@@ -1,380 +1,333 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ticket Types - Admin Panel</title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
-    <style>
-        /* ================= ROOT ================= */
-        :root {
-            --bg-main: #0e1117;
-            --bg-sidebar: #111423;
-            --primary: #1f2a44;
-            --accent: #ffd54f;
-            --text-main: #ffffff;
-            --text-muted: #a1a6b3;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --hover-bg: rgba(255, 255, 255, 0.08);
-            --shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
-            --transition: all 0.35s ease;
-        }
+<style>
+    /* ================= GLOBAL & THEME VARIABLES ================= */
+    :root {
+        --primary: #4318FF;
+        --primary-glow: rgba(67, 24, 255, 0.15);
+        --secondary: #A3AED0;
+        --navy: #1B2559;
+        --bg-body: #F4F7FE;
+        --white: #ffffff;
+        --border-color: rgba(224, 229, 242, 0.3);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-modern: 0px 40px 80px rgba(112, 144, 176, 0.12);
+        --accent-yellow: #FFB800;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    .content-modern {
+        position: relative;
+        padding: 40px 20px;
+        min-height: 100vh;
+        z-index: 1;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        /* ================= BODY ================= */
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-main);
-            color: var(--text-main);
-            overflow-x: hidden;
-        }
+    /* ================= BACKGROUND & OVERLAY ================= */
+    .bg-video {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+        filter: brightness(0.6);
+        pointer-events: none;
+    }
 
-        /* ================= BACKGROUND VIDEO ================= */
-        .bg-video {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -3;
-            filter: brightness(0.65) saturate(0.9) blur(1.2px);
-            pointer-events: none;
-        }
+    .glass-overlay {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(244, 247, 254, 0.85), rgba(244, 247, 254, 0.95));
+        z-index: -1;
+        backdrop-filter: blur(12px);
+    }
 
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
-                linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85));
-            z-index: -2;
-            pointer-events: none;
-        }
+    /* ================= PAGE HEADER ================= */
+    .header-container {
+        margin-bottom: 35px;
+    }
 
-        /* ================= SIDEBAR ================= */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            background: linear-gradient(180deg, #111423, #0d101a);
-            border-right: 1px solid var(--border-color);
-            padding: 32px 24px;
-            z-index: 1000;
-            overflow-y: auto;
-        }
+    .page-title-modern {
+        font-size: 36px;
+        font-weight: 850;
+        color: var(--navy);
+        letter-spacing: -1.5px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 5px;
+    }
 
-        .brand {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 42px;
-            letter-spacing: 0.5px;
-        }
+    .page-title-modern i { color: var(--primary); }
 
-        .section-title {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin: 30px 0 12px;
-            letter-spacing: 1.6px;
-            text-transform: uppercase;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            transition: var(--transition);
-        }
+    /* ================= CARD BOX (GLASSMORPHISM) ================= */
+    .card-box-modern {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--white);
+        border-radius: 30px;
+        padding: 35px;
+        box-shadow: var(--shadow-modern);
+        transition: var(--transition);
+    }
 
-        .section-title:hover {
-            color: var(--accent);
-        }
+    /* ================= TOP ACTIONS ================= */
+    .top-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
 
-        .submenu {
-            display: none;
-            margin-left: 16px;
-            padding-left: 0;
-            list-style: none;
-        }
+    .btn-add-modern {
+        background: var(--primary);
+        color: var(--white);
+        padding: 14px 28px;
+        border-radius: 18px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        box-shadow: 0 10px 20px var(--primary-glow);
+        transition: var(--transition);
+        border: none;
+    }
 
-        .submenu.open {
-            display: block;
-        }
+    .btn-add-modern:hover {
+        transform: translateY(-3px);
+        color: var(--white);
+        filter: brightness(1.1);
+    }
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: var(--text-main);
-            text-decoration: none;
-            border-radius: 12px;
-            transition: var(--transition);
-        }
+    .search-input-modern {
+        background: #F4F7FE;
+        border: 2px solid transparent;
+        padding: 14px 20px;
+        border-radius: 18px;
+        font-weight: 600;
+        color: var(--navy);
+        width: 300px;
+        transition: var(--transition);
+    }
 
-        .sidebar a:hover {
-            background: var(--hover-bg);
-            transform: translateX(6px);
-        }
+    .search-input-modern:focus {
+        background: var(--white);
+        border-color: var(--primary);
+        outline: none;
+    }
 
-        .sidebar a.active {
-            background: linear-gradient(135deg, #1f2a44, #2b3760);
-            font-weight: 600;
-            box-shadow: var(--shadow);
-        }
+    /* ================= TABLE DESIGN ================= */
+    .table-modern {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+    }
 
-        /* ================= CONTENT ================= */
-        .content {
-            margin-left: 260px;
-            padding: 50px 60px;
-            position: relative;
-            z-index: 5;
-        }
+    .table-modern thead th {
+        color: var(--secondary);
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 1px;
+        padding: 15px 20px;
+        border: none;
+    }
 
-        .page-title {
-            font-size: 38px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
-        }
+    .table-modern tbody tr {
+        background: var(--white);
+        transition: var(--transition);
+        box-shadow: 0 4px 10px rgba(112, 144, 176, 0.05);
+    }
 
-        .small-muted {
-            color: var(--text-muted);
-            margin-bottom: 36px;
-            opacity: 0.85;
-        }
+    .table-modern tbody tr:hover {
+        transform: scale(1.01);
+        box-shadow: 0 8px 20px rgba(112, 144, 176, 0.1);
+    }
 
-        .card-box {
-            position: relative;
-            background: linear-gradient(160deg, rgba(26, 31, 46, 0.88), rgba(20, 24, 38, 0.88));
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color);
-            border-radius: 22px;
-            padding: 30px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
+    .table-modern tbody td {
+        padding: 18px 20px;
+        border: none;
+        vertical-align: middle;
+        font-weight: 600;
+        color: var(--navy);
+    }
 
-        .top-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 22px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+    .table-modern tbody td:first-child { border-radius: 15px 0 0 15px; }
+    .table-modern tbody td:last-child { border-radius: 0 15px 15px 0; }
 
-        .action-btn {
-            background: linear-gradient(135deg, #1f2a44, #2b3760);
-            padding: 12px 22px;
-            border-radius: 14px;
-            color: #fff;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
-            text-decoration: none;
-        }
+    /* ================= BADGES & STYLES ================= */
+    .event-badge {
+        color: var(--primary);
+        background: var(--primary-glow);
+        padding: 6px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        display: inline-block;
+    }
 
-        .search-box {
-            background: rgba(17, 24, 41, 0.85);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            padding: 12px 16px;
-            border-radius: 12px;
-            width: 260px;
-            font-size: 14px;
-        }
+    .price-text {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+        color: #059669; /* Green for money */
+    }
 
-        .table {
-            background: transparent !important;
-            color: #fff;
-        }
+    .stock-badge {
+        background: #E0E7FF;
+        color: #4338CA;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+    }
 
-        .table thead th {
-            background: rgba(255, 255, 255, 0.06);
-            font-size: 11px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding: 14px;
-            border-bottom: 1px solid var(--border-color);
-        }
+    .btn-action-modern {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        text-decoration: none;
+    }
 
-        .table tbody td {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            font-size: 14px;
-        }
+    .btn-edit-modern { background: #E9E3FF; color: var(--primary); }
+    .btn-delete-modern { background: #FFEBEB; color: #FF5A5A; }
+    
+    .btn-edit-modern:hover { background: var(--primary); color: white; }
+    .btn-delete-modern:hover { background: #FF5A5A; color: white; }
 
-        .btn-action {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            margin-right: 8px;
-            text-decoration: none;
-        }
+</style>
 
-        .btn-edit { background: rgba(255, 213, 79, 0.15); color: #ffd54f; }
-        .btn-delete { background: rgba(255, 90, 90, 0.15); color: #ff6b6b; }
-
-        .pagination .page-link {
-            background: rgba(17, 24, 41, 0.85);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-        }
-
-        .pagination .page-item.active .page-link {
-            background: var(--accent);
-            color: var(--bg-main);
-        }
-    </style>
-</head>
-
-<body>
-
-<video autoplay muted loop playsinline class="bg-video" poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
+<video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events"><i class="fas fa-calendar-days"></i> Events</a></li>
-        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes" class="active"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
-    </ul>
-
-</div>
-
-<div class="content">
-    <div class="page-title">
-        <i class="fas fa-ticket"></i> Ticket Types
-    </div>
-    <p class="small-muted">Kelola tipe tiket untuk event.</p>
-
-    <div class="card-box">
-        <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-        <?php endif; ?>
-
-        <div class="top-actions">
-            <a href="/admin/masters/tickettypes/create" class="action-btn">
-                <i class="fas fa-plus"></i> Tambah Tipe Tiket
-            </a>
-            <form method="get">
-                <input type="text" class="search-box" name="keyword" placeholder="Search event or ticket..." value="<?= $keyword ?? '' ?>">
-            </form>
+<div class="content-modern">
+    <div class="container-fluid">
+        
+        <div class="header-container">
+            <p style="color: var(--secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; margin-bottom: 5px;">Inventory Management</p>
+            <h1 class="page-title-modern">
+                <i class="fas fa-ticket-alt"></i> Ticket Types
+            </h1>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th width="60">#</th>
-                        <th>Event</th> <th>Nama Tipe</th>
-                        <th>Harga</th>
-                        <th>Stok</th>
-                        <th width="180">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (empty($tickettypes)) : ?>
-                    <tr>
-                        <td colspan="6" class="text-center text-secondary py-3">Tidak ada data.</td>
-                    </tr>
-                <?php else : ?>
-                    <?php $no = 1 + ($page - 1) * $perPage; ?>
-                    <?php foreach ($tickettypes as $t) : ?>
+        <div class="card-box-modern">
+            <?php if (session()->getFlashdata('success')) : ?>
+                <div class="alert alert-success border-0 shadow-sm mb-4" style="border-radius: 15px;">
+                    <i class="fas fa-check-circle me-2"></i> <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="top-actions">
+                <a href="/admin/masters/tickettypes/create" class="btn-add-modern">
+                    <i class="fas fa-plus"></i> New Ticket Category
+                </a>
+                <form method="get">
+                    <input type="text" class="search-input-modern" name="keyword" 
+                           placeholder="Search event or tier..." value="<?= $keyword ?? '' ?>">
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
                         <tr>
-                            <td><?= $no++ ?></td>
-                            <td style="color: var(--accent); font-weight: 500;">
-                                <?= esc($t['event_title'] ?? 'N/A') ?>
-                            </td>
-                            <td><?= esc($t['name']) ?></td>
-                            <td>Rp <?= number_format($t['price']) ?></td>
-                            <td><?= number_format($t['stock']) ?></td>
-                            <td>
-                                <a href="/admin/masters/tickettypes/edit/<?= $t['id'] ?>" class="btn-action btn-edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="/admin/masters/tickettypes/delete/<?= $t['id'] ?>" onclick="return confirm('Hapus tipe tiket ini?')" class="btn-action btn-delete">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
+                            <th width="60">#</th>
+                            <th>Associated Event</th>
+                            <th>Ticket Tier</th>
+                            <th>Base Price</th>
+                            <th>Availability</th>
+                            <th class="text-end">Management</th>
                         </tr>
-                    <?php endforeach ?>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($tickettypes)) : ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <p class="text-secondary fw-bold">No ticket data available.</p>
+                                </td>
+                            </tr>
+                        <?php else : ?>
+                            <?php $no = 1 + ($page - 1) * $perPage; ?>
+                            <?php foreach ($tickettypes as $t) : ?>
+                                <tr>
+                                    <td><span class="text-secondary">#<?= $no++ ?></span></td>
+                                    <td>
+                                        <span class="event-badge fw-bold">
+                                            <i class="fas fa-calendar-check me-1"></i>
+                                            <?= esc($t['event_title'] ?? 'N/A') ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold fs-6"><?= esc($t['name']) ?></div>
+                                        <small class="text-muted">Tier Category</small>
+                                    </td>
+                                    <td>
+                                        <span class="price-text">Rp <?= number_format($t['price'], 0, ',', '.') ?></span>
+                                    </td>
+                                    <td>
+                                        <span class="stock-badge fw-bold">
+                                            <?= number_format($t['stock']) ?> <small>Available</small>
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="/admin/masters/tickettypes/edit/<?= $t['id'] ?>" class="btn-action-modern btn-edit-modern">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <a href="/admin/masters/tickettypes/delete/<?= $t['id'] ?>" 
+                                           onclick="return confirm('Hapus tipe tiket ini?')" 
+                                           class="btn-action-modern btn-delete-modern">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="mt-3">
-            <?= $pager->links('default', 'default_full') ?>
+            <div class="mt-4 d-flex justify-content-center">
+                <?= $pager->links('default', 'default_full') ?>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+// Sidebar Toggle Logic (Tetap dipertahankan agar tidak rusak)
 function toggleSubmenu(element) {
     const submenu = element.nextElementSibling;
-    const icon = element.querySelector('i');
+    const icon = element.querySelector('i.fa-chevron-down');
     if (submenu.classList.contains('open')) {
         submenu.classList.remove('open');
-        icon.style.transform = 'rotate(0deg)';
+        if(icon) icon.style.transform = 'rotate(0deg)';
     } else {
         submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
+        if(icon) icon.style.transform = 'rotate(180deg)';
     }
 }
+
 document.addEventListener('DOMContentLoaded', function() {
     const activeLink = document.querySelector('.submenu a.active');
     if (activeLink) {
         const submenu = activeLink.closest('.submenu');
-        const sectionTitle = submenu.previousElementSibling;
-        const icon = sectionTitle.querySelector('i');
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
+        if (submenu) {
+            const sectionTitle = submenu.previousElementSibling;
+            const icon = sectionTitle.querySelector('i.fa-chevron-down');
+            submenu.classList.add('open');
+            if (icon) icon.style.transform = 'rotate(180deg)';
+        }
     }
 });
 </script>
 
-</body>
-</html>
+<?= $this->endSection() ?>

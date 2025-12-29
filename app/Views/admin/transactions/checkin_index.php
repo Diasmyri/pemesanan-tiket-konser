@@ -1,212 +1,243 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Check-in Gate - Admin Panel</title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
-    <style>
+<style>
+    /* ================= GLOBAL & THEME VARIABLES ================= */
     :root {
-        --bg-main: #0e1117;
-        --bg-sidebar: #111423;
-        --primary: #1f2a44;
-        --accent: #ffd54f;
-        --text-main: #ffffff;
-        --text-muted: #a1a6b3;
-        --border-color: rgba(255, 255, 255, 0.08);
-        --hover-bg: rgba(255, 255, 255, 0.08);
-        --shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
-        --transition: all 0.35s ease;
+        --primary: #4318FF;
+        --primary-glow: rgba(67, 24, 255, 0.15);
+        --secondary: #A3AED0;
+        --navy: #1B2559;
+        --white: #ffffff;
+        --success: #05CD99;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-modern: 0px 40px 80px rgba(112, 144, 176, 0.12);
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-main); overflow-x: hidden; }
 
-    /* Background Video Setup */
-    .bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; filter: brightness(0.45) saturate(0.9) blur(1.2px); pointer-events: none; }
-    body::after { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%), linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85)); z-index: -2; pointer-events: none; }
+    .content-modern {
+        position: relative;
+        padding: 40px 20px;
+        min-height: 100vh;
+        z-index: 1;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-    /* Sidebar & Nav Styles */
-    .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: linear-gradient(180deg, #111423, #0d101a); border-right: 1px solid var(--border-color); padding: 32px 24px; z-index: 1000; overflow-y: auto; }
-    .brand { font-size: 22px; font-weight: 700; color: var(--accent); text-align: center; margin-bottom: 42px; letter-spacing: 0.5px; }
-    .section-title { font-size: 11px; color: var(--text-muted); margin: 30px 0 12px; letter-spacing: 1.6px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 8px 0; transition: var(--transition); }
-    .section-title:hover { color: var(--accent); }
-    .submenu { display: none; margin-left: 16px; padding-left: 0; list-style: none; }
-    .submenu.open { display: block; }
-    .sidebar a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; font-size: 14px; color: var(--text-main); text-decoration: none; border-radius: 12px; transition: var(--transition); }
-    .sidebar a:hover { background: var(--hover-bg); transform: translateX(6px); }
-    .sidebar a.active { background: linear-gradient(135deg, #1f2a44, #2b3760); font-weight: 600; box-shadow: var(--shadow); }
+    /* ================= BACKGROUND & GLASS ================= */
+    .bg-video {
+        position: fixed; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; z-index: -2; filter: brightness(0.5);
+        pointer-events: none;
+    }
 
-    /* Content & Tables */
-    .content { margin-left: 260px; padding: 50px 60px; position: relative; z-index: 5; }
-    .page-title { font-size: 38px; font-weight: 700; display: flex; align-items: center; gap: 14px; text-shadow: 0 10px 40px rgba(0, 0, 0, 0.65); margin-bottom: 10px; }
-    .small-muted { color: var(--text-muted); margin-bottom: 36px; opacity: 0.85; font-size: 14px; }
-    .card-box { position: relative; background: linear-gradient(160deg, rgba(26, 31, 46, 0.88), rgba(20, 24, 38, 0.88)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 22px; padding: 30px; box-shadow: var(--shadow); transition: var(--transition); }
-    
-    .table { background: transparent !important; color: #fff; margin-bottom: 0; }
-    .table thead th { background: rgba(255, 255, 255, 0.06); font-size: 11px; text-transform: uppercase; color: var(--text-muted); padding: 14px; border-bottom: 1px solid var(--border-color); }
-    .table tbody td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 14px; }
-    
-    /* Search Box */
-    .search-container { margin-bottom: 25px; display: flex; justify-content: flex-end; }
-    .search-box { background: rgba(17, 24, 41, 0.85); border: 1px solid var(--border-color); color: #fff; padding: 12px 16px; border-radius: 12px; width: 350px; font-size: 14px; transition: var(--transition); }
-    .search-box:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 15px rgba(255, 213, 79, 0.15); }
+    .glass-overlay {
+        position: fixed; inset: 0;
+        background: linear-gradient(135deg, rgba(244, 247, 254, 0.8), rgba(244, 247, 254, 0.9));
+        z-index: -1; backdrop-filter: blur(15px);
+    }
 
-    /* Check-in Specific Styles */
-    .ticket-box { font-family: 'Courier New', monospace; background: rgba(255, 213, 79, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 6px; border: 1px dashed rgba(255, 213, 79, 0.5); font-weight: 700; letter-spacing: 1px; }
-    .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-    .status-in { background: rgba(40, 167, 69, 0.2); color: #28a745; }
-    .status-wait { background: rgba(255, 255, 255, 0.05); color: #777; }
-    .btn-checkin { background: var(--accent); color: #000; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 700; font-size: 12px; transition: var(--transition); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-    .btn-checkin:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 213, 79, 0.3); color: #000; }
-    </style>
-</head>
+    /* ================= PAGE HEADER ================= */
+    .header-container { margin-bottom: 35px; }
+    .page-title-modern {
+        font-size: 36px; font-weight: 850; color: var(--navy);
+        letter-spacing: -1.5px; display: flex; align-items: center; gap: 15px;
+    }
+    .page-title-modern i { color: var(--primary); }
+    .sub-title {
+        color: var(--secondary); font-weight: 700; font-size: 14px;
+        text-transform: uppercase; letter-spacing: 1.5px;
+    }
 
-<body>
+    /* ================= CARD BOX ================= */
+    .card-box-modern {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--white);
+        border-radius: 30px;
+        padding: 35px;
+        box-shadow: var(--shadow-modern);
+    }
+
+    /* ================= TICKET BOX (SCANNER STYLE) ================= */
+    .ticket-code-wrapper {
+        background: var(--navy);
+        color: #00F2FE;
+        padding: 8px 15px;
+        border-radius: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        font-weight: 700;
+        border: 1px solid rgba(0, 242, 254, 0.3);
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ticket-code-wrapper::after {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.2), transparent);
+        animation: scan 3s infinite;
+    }
+
+    @keyframes scan {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    /* ================= TABLE DESIGN ================= */
+    .table-modern { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+    .table-modern thead th {
+        color: var(--secondary); font-weight: 800; text-transform: uppercase;
+        font-size: 11px; padding: 15px 20px; border: none;
+    }
+    .table-modern tbody tr { background: var(--white); transition: var(--transition); }
+    .table-modern tbody td { padding: 18px 20px; border: none; vertical-align: middle; font-weight: 600; color: var(--navy); }
+    .table-modern tbody td:first-child { border-radius: 20px 0 0 20px; }
+    .table-modern tbody td:last-child { border-radius: 0 20px 20px 0; }
+
+    /* ================= BUTTONS & BADGES ================= */
+    .btn-checkin-modern {
+        background: linear-gradient(135deg, var(--primary), #5E3AFF);
+        color: white !important;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+        box-shadow: 0 10px 20px var(--primary-glow);
+    }
+
+    .btn-checkin-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px var(--primary-glow);
+    }
+
+    .status-pill {
+        padding: 6px 14px; border-radius: 10px; font-size: 11px;
+        font-weight: 800; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .pill-in { background: #E6FFF5; color: #00C56E; }
+    .pill-out { background: #F4F7FE; color: #8F9BBA; }
+
+    /* ================= SEARCH BOX ================= */
+    .search-input-modern {
+        width: 100%; background: #F4F7FE; border: 2px solid transparent;
+        padding: 14px 20px 14px 50px; border-radius: 18px;
+        font-weight: 600; color: var(--navy); transition: var(--transition);
+    }
+    .search-input-modern:focus { background: var(--white); border-color: var(--primary); outline: none; }
+</style>
 
 <video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
-
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
-        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin" class="active"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
-    </ul>
-
-</div>
-
-<div class="content">
-
-    <div class="page-title">
-        <i class="fas fa-qrcode"></i> Check-in Gate
-    </div>
-    <p class="small-muted">Verifikasi tiket dan kedatangan penonton di lokasi event.</p>
-
-    <div class="card-box">
-        <?php if(session()->getFlashdata('success')): ?>
-            <div class="alert alert-success" style="background: rgba(40,167,69,0.2); border:none; color:#28a745;"><?= session()->getFlashdata('success') ?></div>
-        <?php endif; ?>
-
-        <div class="search-container">
-            <input type="text" id="checkinSearch" class="search-box" placeholder="Cari Kode Tiket, Nama User, atau Event...">
+<div class="content-modern">
+    <div class="container-fluid">
+        
+        <div class="header-container">
+            <p class="sub-title">On-site Verification</p>
+            <h1 class="page-title-modern">
+                <i class="fas fa-qrcode"></i> Check-in Gate
+            </h1>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover" id="checkinTable">
-                <thead>
-                    <tr>
-                        <th>Ticket Code</th>
-                        <th>User</th>
-                        <th>Event / Type</th>
-                        <th>Waktu Check-in</th>
-                        <th>Status</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if(empty($checkins)): ?>
-                    <tr class="no-data"><td colspan="6" class="text-center text-muted py-5">Belum ada data tiket yang tersedia.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($checkins as $c): ?>
-                    <tr>
-                        <td><span class="ticket-box"><?= $c['ticket_code'] ?></span></td>
-                        <td>
-                            <span class="fw-bold text-white"><?= esc($c['user_name']) ?></span><br>
-                            <small class="text-muted">#ORD-<?= $c['order_id'] ?></small>
-                        </td>
-                        <td>
-                            <span style="color: var(--accent)"><?= esc($c['event_name']) ?></span><br>
-                            <small class="text-muted"><?= esc($c['ticket_type_name']) ?></small>
-                        </td>
-                        <td>
-                            <span class="text-white">
-                                <?= $c['checked_in_at'] ? date('d M, H:i', strtotime($c['checked_in_at'])) : '<small class="text-muted">— Belum Masuk —</small>' ?>
-                            </span>
-                        </td>
-                        <td>
-                            <?php if($c['checkin_status'] == 'checked_in'): ?>
-                                <span class="status-badge status-in"><i class="fas fa-check-circle"></i> IN GATE</span>
-                            <?php else: ?>
-                                <span class="status-badge status-wait"><i class="fas fa-circle-notch"></i> OUTSIDE</span>
-                            <?php endif; ?>
-                        </td>
-                        <td class="text-center">
-                            <?php if(!$c['checkin_status']): ?>
-                                <a href="/admin/transactions/checkin/process/<?= $c['order_id'] ?>" 
-                                   class="btn-checkin" onclick="return confirm('Konfirmasi Check-in untuk Tiket ini?')">
-                                    <i class="fas fa-sign-in-alt"></i> SCAN & ENTER
-                                </a>
-                            <?php else: ?>
-                                <span style="color: #28a745; font-size: 12px; font-weight: 600;">
-                                    <i class="fas fa-circle-check"></i> VERIFIED
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php endforeach ?>
-                <?php endif ?>
-                </tbody>
-            </table>
+        <div class="card-box-modern">
+            <?php if(session()->getFlashdata('success')): ?>
+                <div class="alert alert-success border-0 mb-4 shadow-sm" style="border-radius: 18px;">
+                    <i class="fas fa-check-double me-2"></i> <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0" style="color: var(--navy)">Live Entry List</h5>
+                <div style="position: relative; width: 350px;">
+                    <i class="fas fa-search" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--secondary);"></i>
+                    <input type="text" id="checkinSearch" class="search-input-modern" placeholder="Quick search ticket or name...">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-modern" id="checkinTable">
+                    <thead>
+                        <tr>
+                            <th>Ticket Code</th>
+                            <th>Attendee</th>
+                            <th>Event Detail</th>
+                            <th>Check-in Time</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(empty($checkins)): ?>
+                            <tr class="no-data"><td colspan="6" class="text-center py-5 text-secondary">No tickets available.</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($checkins as $c): ?>
+                            <tr>
+                                <td>
+                                    <div class="ticket-code-wrapper">
+                                        <?= $c['ticket_code'] ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold"><?= esc($c['user_name']) ?></div>
+                                    <small class="text-secondary">#ORD-<?= $c['order_id'] ?></small>
+                                </td>
+                                <td>
+                                    <div style="color: var(--primary); font-weight: 700;"><?= esc($c['event_name']) ?></div>
+                                    <small class="text-secondary"><?= esc($c['ticket_type_name']) ?></small>
+                                </td>
+                                <td>
+                                    <div style="font-size: 13px;">
+                                        <?= $c['checked_in_at'] ? date('d M, H:i', strtotime($c['checked_in_at'])) : '<span class="opacity-50 text-secondary">— Not Scanned —</span>' ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <?php if($c['checkin_status'] == 'checked_in'): ?>
+                                        <span class="status-pill pill-in"><i class="fas fa-check-circle"></i> INSIDE</span>
+                                    <?php else: ?>
+                                        <span class="status-pill pill-out"><i class="fas fa-clock"></i> WAITING</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php if(!$c['checkin_status']): ?>
+                                        <a href="/admin/transactions/checkin/process/<?= $c['order_id'] ?>" 
+                                           class="btn-checkin-modern" onclick="return confirm('Confirm entry for this ticket?')">
+                                            <i class="fas fa-bolt"></i> VERIFY ENTRY
+                                        </a>
+                                    <?php else: ?>
+                                        <div class="text-success fw-bold" style="font-size: 12px;">
+                                            <i class="fas fa-shield-check"></i> ACCESS GRANTED
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach ?>
+                        <?php endif ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-// Toggle Submenu Sidebar
-function toggleSubmenu(element) {
-    const submenu = element.nextElementSibling;
-    const icon = element.querySelector('i');
-    if (submenu.classList.contains('open')) {
-        submenu.classList.remove('open');
-        icon.style.transform = 'rotate(0deg)';
-    } else {
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
-}
-
-// Auto-open Submenu if active
 document.addEventListener('DOMContentLoaded', function() {
-    const activeLink = document.querySelector('.submenu a.active');
-    if (activeLink) {
-        const submenu = activeLink.closest('.submenu');
-        const sectionTitle = submenu.previousElementSibling;
-        const icon = sectionTitle.querySelector('i');
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
-
-    // Real-time Search Logic
     const searchInput = document.getElementById('checkinSearch');
     const tableRows = document.querySelectorAll('#checkinTable tbody tr:not(.no-data)');
 
     searchInput.addEventListener('input', function() {
         const query = this.value.toLowerCase();
-        
         tableRows.forEach(row => {
             const text = row.innerText.toLowerCase();
             row.style.display = text.includes(query) ? '' : 'none';
@@ -215,5 +246,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-</body>
-</html>
+<?= $this->endSection() ?>

@@ -1,415 +1,358 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Venues - Admin Panel</title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
-    <style>
-/* ================= ROOT ================= */
-:root{
-    --bg-main:#0e1117;
-    --bg-sidebar:#111423;
-    --primary:#1f2a44;
-    --accent:#ffd54f;
+<style>
+    /* ================= GLOBAL & THEME VARIABLES ================= */
+    :root {
+        --primary: #4318FF;
+        --primary-glow: rgba(67, 24, 255, 0.15);
+        --secondary: #A3AED0;
+        --navy: #1B2559;
+        --bg-body: #F4F7FE;
+        --white: #ffffff;
+        --border-color: rgba(224, 229, 242, 0.3);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-modern: 0px 40px 80px rgba(112, 144, 176, 0.12);
+    }
 
-    --text-main:#ffffff;
-    --text-muted:#a1a6b3;
+    /* Layout Content */
+    .content-modern {
+        position: relative;
+        padding: 40px 20px;
+        min-height: 100vh;
+        z-index: 1;
+        font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+    }
 
-    --border-color:rgba(255,255,255,.08);
-    --hover-bg:rgba(255,255,255,.08);
-    --shadow:0 18px 45px rgba(0,0,0,.55);
-    --transition:all .35s ease;
-}
+    /* ================= BACKGROUND VIDEO & OVERLAY ================= */
+    .bg-video {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+        filter: brightness(0.6);
+        pointer-events: none;
+    }
 
-*{box-sizing:border-box}
+    .glass-overlay {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(244, 247, 254, 0.85), rgba(244, 247, 254, 0.95));
+        z-index: -1;
+        backdrop-filter: blur(12px);
+    }
 
-/* ================= BODY ================= */
-body{
-    margin:0;
-    font-family:'Poppins',sans-serif;
-    background:var(--bg-main);
-    color:var(--text-main);
-    overflow-x:hidden;
-}
+    /* ================= PAGE HEADER ================= */
+    .header-container {
+        margin-bottom: 35px;
+    }
 
-/* ================= BACKGROUND VIDEO ================= */
-.bg-video{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    z-index:-3;
-    filter:brightness(.65) saturate(.9) blur(1.2px);
-    pointer-events:none;
-}
+    .page-title-modern {
+        font-size: 36px;
+        font-weight: 850;
+        color: var(--navy);
+        letter-spacing: -1.5px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 5px;
+    }
 
-/* GLOBAL OVERLAY (LEMBUT BIAR VIDEO KELIATAN) */
-body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-    background:
-        radial-gradient(circle at top, rgba(255,255,255,.08), transparent 45%),
-        linear-gradient(rgba(10,12,20,.78), rgba(10,12,20,.85));
-    z-index:-2;
-    pointer-events:none;
-}
+    .page-title-modern i {
+        color: var(--primary);
+    }
 
-/* ================= SIDEBAR ================= */
-.sidebar{
-    position:fixed;
-    top:0;left:0;
-    width:260px;
-    height:100vh;
-    background:linear-gradient(180deg,#111423,#0d101a);
-    border-right:1px solid var(--border-color);
-    padding:32px 24px;
-    z-index:1000;
-    overflow-y:auto;
-}
+    .sub-title {
+        color: var(--secondary);
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
 
-.brand{
-    font-size:22px;
-    font-weight:700;
-    color:var(--accent);
-    text-align:center;
-    margin-bottom:42px;
-    letter-spacing:.5px;
-}
+    /* ================= CARD BOX (GLASSMORPHISM) ================= */
+    .card-box-modern {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--white);
+        border-radius: 30px;
+        padding: 35px;
+        box-shadow: var(--shadow-modern);
+        transition: var(--transition);
+    }
 
-.section-title{
-    font-size:11px;
-    color:var(--text-muted);
-    margin:30px 0 12px;
-    letter-spacing:1.6px;
-    text-transform:uppercase;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:8px 0;
-    transition:var(--transition);
-}
+    .card-box-modern:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.85);
+    }
 
-.section-title:hover{
-    color:var(--accent);
-}
+    /* ================= TOP ACTIONS & SEARCH ================= */
+    .top-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
 
-.section-title i{
-    transition:var(--transition);
-}
+    .btn-add-modern {
+        background: var(--primary);
+        color: var(--white);
+        padding: 14px 28px;
+        border-radius: 18px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        box-shadow: 0 10px 20px var(--primary-glow);
+        transition: var(--transition);
+        border: none;
+    }
 
-.submenu{
-    display:none;
-    margin-left:16px;
-    padding-left:0;
-    list-style:none;
-}
+    .btn-add-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px var(--primary-glow);
+        color: var(--white);
+        filter: brightness(1.1);
+    }
 
-.submenu.open{
-    display:block;
-}
+    .search-wrapper {
+        position: relative;
+        width: 300px;
+    }
 
-.sidebar a{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px 16px;
-    margin-bottom:10px;
-    font-size:14px;
-    color:var(--text-main);
-    text-decoration:none;
-    border-radius:12px;
-    transition:var(--transition);
-}
+    .search-input-modern {
+        width: 100%;
+        background: #F4F7FE;
+        border: 2px solid transparent;
+        padding: 14px 20px 14px 50px;
+        border-radius: 18px;
+        font-weight: 600;
+        color: var(--navy);
+        transition: var(--transition);
+    }
 
-.sidebar a:hover{
-    background:var(--hover-bg);
-    transform:translateX(6px);
-}
+    .search-input-modern:focus {
+        background: var(--white);
+        border-color: var(--primary);
+        box-shadow: 0 10px 20px var(--primary-glow);
+        outline: none;
+    }
 
-.sidebar a.active{
-    background:linear-gradient(135deg,#1f2a44,#2b3760);
-    font-weight:600;
-    box-shadow:var(--shadow);
-}
-/* ================= CONTENT ================= */
-.content{
-    margin-left:260px;
-    padding:50px 60px;
-    position:relative;
-    z-index:5;
-}
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--secondary);
+        font-size: 18px;
+    }
 
-/* ================= PAGE HEADER ================= */
-.page-title{
-    font-size:38px;
-    font-weight:700;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    text-shadow:0 10px 40px rgba(0,0,0,.65);
-}
+    /* ================= TABLE DESIGN ================= */
+    .table-responsive-modern {
+        border-radius: 20px;
+        overflow: hidden;
+    }
 
-.small-muted{
-    color:var(--text-muted);
-    margin-bottom:36px;
-    opacity:.85;
-}
+    .table-modern {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+    }
 
-/* ================= CARD (GLASS) ================= */
-.card-box{
-    position:relative;
-    background:
-        linear-gradient(
-            160deg,
-            rgba(26,31,46,.88),
-            rgba(20,24,38,.88)
-        );
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    .table-modern thead th {
+        background: transparent;
+        border: none;
+        color: var(--secondary);
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 15px 20px;
+    }
 
-    border:1px solid var(--border-color);
-    border-radius:22px;
-    padding:30px;
-    box-shadow:var(--shadow);
-    transition:.35s;
-}
+    .table-modern tbody tr {
+        background: var(--white);
+        box-shadow: 0 4px 10px rgba(112, 144, 176, 0.05);
+        transition: var(--transition);
+    }
 
-.card-box:hover{
-    transform:translateY(-4px);
-    box-shadow:
-        0 0 0 1px rgba(255,213,79,.18),
-        0 30px 90px rgba(0,0,0,.75);
-}
+    .table-modern tbody tr:hover {
+        transform: scale(1.01);
+        box-shadow: 0 8px 20px rgba(112, 144, 176, 0.12);
+    }
 
-/* ================= TOP ACTION ================= */
-.top-actions{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:22px;
-}
+    .table-modern tbody td {
+        padding: 20px;
+        border: none;
+        vertical-align: middle;
+        font-weight: 600;
+        color: var(--navy);
+    }
 
-.action-btn{
-    background:linear-gradient(135deg,#1f2a44,#2b3760);
-    padding:12px 22px;
-    border-radius:14px;
-    color:#fff;
-    font-weight:600;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    transition:.3s;
-    text-decoration:none;
-    border:none;
-}
+    .table-modern tbody td:first-child { border-radius: 15px 0 0 15px; }
+    .table-modern tbody td:last-child { border-radius: 0 15px 15px 0; }
 
-.action-btn:hover{
-    transform:translateY(-2px);
-    box-shadow:var(--shadow);
-}
+    /* ================= BADGES & ICONS ================= */
+    .capacity-badge {
+        background: #E2E8F0;
+        color: var(--navy);
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+    }
 
-/* ================= SEARCH ================= */
-.search-box{
-    background:rgba(17,24,41,.85);
-    border:1px solid var(--border-color);
-    color:#fff;
-    padding:12px 16px;
-    border-radius:12px;
-    width:260px;
-}
+    .location-text {
+        color: var(--secondary);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-.search-box:focus{
-    outline:none;
-    border-color:var(--accent);
-}
+    /* ================= ACTION BUTTONS ================= */
+    .btn-action-modern {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        text-decoration: none;
+        border: none;
+        margin-right: 5px;
+    }
 
-/* ================= TABLE ================= */
-.table{
-    background:transparent!important;
-    color:#fff;
-}
+    .btn-edit-modern {
+        background: #E9E3FF;
+        color: var(--primary);
+    }
 
-.table thead th{
-    background:rgba(255,255,255,.06);
-    font-size:11px;
-    text-transform:uppercase;
-    color:var(--text-muted);
-    padding:14px;
-}
+    .btn-edit-modern:hover {
+        background: var(--primary);
+        color: var(--white);
+        transform: rotate(15deg);
+    }
 
-.table tbody td{
-    padding:16px;
-    border-bottom:1px solid var(--border-color);
-    vertical-align:middle;
-}
+    .btn-delete-modern {
+        background: #FFEBEB;
+        color: #FF5A5A;
+    }
 
-.table tbody tr:hover{
-    background:rgba(255,255,255,.05);
-}
-
-/* ================= ARTIST PHOTO ================= */
-.artist-photo{
-    width:80px;
-    height:105px;
-    object-fit:cover;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.12);
-}
-
-/* ================= ACTION BUTTON ================= */
-.btn-action{
-    width:36px;
-    height:36px;
-    border-radius:10px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    transition:.25s;
-    margin-right:8px;
-    border:none;
-    text-decoration:none;
-}
-
-.btn-edit{
-    background:rgba(255,213,79,.15);
-    color:#ffd54f;
-}
-.btn-edit:hover{background:rgba(255,213,79,.35);transform:scale(1.05)}
-
-.btn-delete{
-    background:rgba(255,90,90,.15);
-    color:#ff6b6b;
-}
-.btn-delete:hover{background:rgba(255,90,90,.35);transform:scale(1.05)}
-
-/* ================= RESPONSIVE ================= */
-@media(max-width:768px){
-    .bg-video{display:none}
-    .sidebar{position:relative;width:100%;height:auto;padding:20px}
-    .content{margin-left:0;padding:32px 22px}
-}
+    .btn-delete-modern:hover {
+        background: #FF5A5A;
+        color: var(--white);
+        transform: scale(1.1);
+    }
 </style>
-</head>
 
-<body>
-
-<!-- BACKGROUND VIDEO -->
-<video autoplay muted loop playsinline class="bg-video"
-poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
+<video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
+<div class="content-modern">
+    <div class="container-fluid">
+        
+        <div class="header-container">
+            <p class="sub-title">Location & Infrastructure</p>
+            <h1 class="page-title-modern">
+                <i class="fas fa-map-marked-alt"></i> Venue Master List
+            </h1>
+        </div>
 
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
+        <div class="card-box-modern">
+            <?php if (session()->getFlashdata('success')) : ?>
+                <div class="alert alert-success border-0 shadow-sm mb-4" style="border-radius: 15px; background: #D1FAE5; color: #065F46;">
+                    <i class="fas fa-check-circle me-2"></i> <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
 
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
+            <div class="top-actions">
+                <a href="/admin/masters/venues/create" class="btn-add-modern">
+                    <i class="fas fa-plus-circle"></i> Add New Venue
+                </a>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
+                <form method="get" class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input-modern"
+                           name="keyword"
+                           placeholder="Search by name or city..."
+                           value="<?= $keyword ?? '' ?>">
+                </form>
+            </div>
+
+            <div class="table-responsive-modern">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th width="80">#</th>
+                            <th>Venue Details</th>
+                            <th>Location Info</th>
+                            <th>Seating Capacity</th>
+                            <th class="text-end" width="150">Management</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($venues)) : ?>
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <img src="https://illustrations.popsy.co/white/location-search.svg" alt="Empty" style="width: 150px; opacity: 0.5;">
+                                    <p class="mt-3 fw-bold text-secondary">No venues found in the database.</p>
+                                </td>
+                            </tr>
+                        <?php else : ?>
+                            <?php $no = 1; foreach ($venues as $v) : ?>
+                            <tr>
+                                <td><span class="text-secondary fw-bold">#<?= $no++ ?></span></td>
+                                <td>
+                                    <div class="fw-bolder fs-5"><?= $v['name'] ?></div>
+                                    <small class="text-primary fw-bold">ID: VEN-<?= $v['id'] ?></small>
+                                </td>
+                                <td>
+                                    <div class="location-text">
+                                        <i class="fas fa-location-arrow text-primary"></i>
+                                        <?= $v['location'] ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="capacity-badge">
+                                        <i class="fas fa-users me-1"></i> <?= number_format($v['capacity']) ?> Pax
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="/admin/masters/venues/edit/<?= $v['id'] ?>" class="btn-action-modern btn-edit-modern" title="Edit Venue">
+                                        <i class="fas fa-pen-nib"></i>
+                                    </a>
+                                    <a href="/admin/masters/venues/delete/<?= $v['id'] ?>"
+                                       onclick="return confirm('Are you sure you want to delete this venue?')"
+                                       class="btn-action-modern btn-delete-modern" title="Delete Venue">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach ?>
+                        <?php endif ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-center">
+                <?= $pager->links('default', 'default_full') ?>
+            </div>
+        </div>
     </div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
-        <li><a href="/admin/masters/venues" class="active"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
-    </ul>
-
 </div>
 
-<div class="content">
-
-    <div class="page-title">
-        <i class="fas fa-location-dot"></i>
-        Venues
-    </div>
-
-    <p class="small-muted">Kelola data venue konser.</p>
-
-    <div class="card-box">
-
-        <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-        <?php endif; ?>
-
-        <div class="top-actions">
-            <a href="/admin/masters/venues/create" class="action-btn">
-                <i class="fas fa-plus"></i> Tambah Venue
-            </a>
-
-            <form method="get">
-                <input type="text" class="search-box"
-                       name="keyword"
-                       placeholder="Search venue..."
-                       value="<?= $keyword ?? '' ?>">
-            </form>
-        </div>
-
-        <table class="table mt-3">
-            <thead>
-                <tr>
-                    <th width="50">#</th>
-                    <th>Nama Venue</th>
-                    <th>Lokasi</th>
-                    <th>Kapasitas</th>
-                    <th width="100">Aksi</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            <?php if (empty($venues)) : ?>
-                <tr>
-                    <td colspan="5" class="text-center text-secondary py-3">Tidak ada data.</td>
-                </tr>
-            <?php else : ?>
-                <?php $no = 1; foreach ($venues as $v) : ?>
-                <tr>
-                    <td><?= $no++ ?></td>
-                    <td><?= $v['name'] ?></td>
-                    <td><?= $v['location'] ?></td>
-                    <td><?= number_format($v['capacity']) ?></td>
-                    <td>
-                        <a href="/admin/masters/venues/edit/<?= $v['id'] ?>" class="btn-action btn-edit">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/admin/masters/venues/delete/<?= $v['id'] ?>"
-                           onclick="return confirm('Hapus venue ini?')"
-                           class="btn-action btn-delete">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                <?php endforeach ?>
-            <?php endif ?>
-            </tbody>
-        </table>
-
-        <div class="mt-3">
-            <?= $pager->links('default', 'default_full') ?>
-        </div>
-
-    </div>
-
-    <script>
+<script>
+// Toggle Submenu Function (Tetap Dipertahankan)
 function toggleSubmenu(element) {
     const submenu = element.nextElementSibling;
     const icon = element.querySelector('i');
@@ -423,20 +366,19 @@ function toggleSubmenu(element) {
     }
 }
 
-// Auto-open submenu jika halaman aktif ada di dalamnya
+// Auto-open active submenu (Tetap Dipertahankan)
 document.addEventListener('DOMContentLoaded', function() {
     const activeLink = document.querySelector('.submenu a.active');
     if (activeLink) {
         const submenu = activeLink.closest('.submenu');
-        const sectionTitle = submenu.previousElementSibling;
-        const icon = sectionTitle.querySelector('i');
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
+        if (submenu) {
+            const sectionTitle = submenu.previousElementSibling;
+            const icon = sectionTitle.querySelector('i.fa-chevron-down');
+            submenu.classList.add('open');
+            if (icon) icon.style.transform = 'rotate(180deg)';
+        }
     }
 });
 </script>
 
-</div>
-
-</body>
-</html>
+<?= $this->endSection() ?>
