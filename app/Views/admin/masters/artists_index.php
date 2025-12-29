@@ -1,555 +1,381 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Artists - Admin Panel</title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
 <style>
-/* ================= ROOT ================= */
-:root {
-    --bg-main: #0e1117;
-    --bg-sidebar: #111423;
-    --primary: #1f2a44;
-    --accent: #ffd54f;
-    --text-main: #ffffff;
-    --text-muted: #a1a6b3;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --hover-bg: rgba(255, 255, 255, 0.08);
-    --shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
-    --transition: all 0.35s ease;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-/* ================= BODY ================= */
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: var(--bg-main);
-    color: var(--text-main);
-    overflow-x: hidden;
-}
-
-/* ================= BACKGROUND VIDEO ================= */
-.bg-video {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -3;
-    filter: brightness(0.65) saturate(0.9) blur(1.2px);
-    pointer-events: none;
-}
-
-/* GLOBAL OVERLAY (LEMBUT BIAR VIDEO KELIATAN) */
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
-        linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85));
-    z-index: -2;
-    pointer-events: none;
-}
-
-/* ================= SIDEBAR ================= */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100vh;
-    background: linear-gradient(180deg, #111423, #0d101a);
-    border-right: 1px solid var(--border-color);
-    padding: 32px 24px;
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.brand {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--accent);
-    text-align: center;
-    margin-bottom: 42px;
-    letter-spacing: 0.5px;
-}
-
-.section-title {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin: 30px 0 12px;
-    letter-spacing: 1.6px;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0;
-    transition: var(--transition);
-}
-
-.section-title:hover {
-    color: var(--accent);
-}
-
-.section-title i {
-    transition: var(--transition);
-}
-
-.submenu {
-    display: none;
-    margin-left: 16px;
-    padding-left: 0;
-    list-style: none;
-}
-
-.submenu.open {
-    display: block;
-}
-
-.sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: var(--text-main);
-    text-decoration: none;
-    border-radius: 12px;
-    transition: var(--transition);
-}
-
-.sidebar a:hover {
-    background: var(--hover-bg);
-    transform: translateX(6px);
-}
-
-.sidebar a.active {
-    background: linear-gradient(135deg, #1f2a44, #2b3760);
-    font-weight: 600;
-    box-shadow: var(--shadow);
-}
-
-/* ================= CONTENT ================= */
-.content {
-    margin-left: 260px;
-    padding: 50px 60px;
-    position: relative;
-    z-index: 5;
-}
-
-/* ================= PAGE HEADER ================= */
-.page-title {
-    font-size: 38px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
-    margin-bottom: 10px;
-}
-
-.small-muted {
-    color: var(--text-muted);
-    margin-bottom: 36px;
-    opacity: 0.85;
-    font-size: 14px;
-}
-
-/* ================= ALERT ================= */
-.alert {
-    padding: 12px 16px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-
-.alert-success {
-    background: rgba(40, 167, 69, 0.15);
-    color: #28a745;
-    border: 1px solid rgba(40, 167, 69, 0.3);
-}
-
-/* ================= CARD (GLASS) ================= */
-.card-box {
-    position: relative;
-    background:
-        linear-gradient(
-            160deg,
-            rgba(26, 31, 46, 0.88),
-            rgba(20, 24, 38, 0.88)
-        );
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-color);
-    border-radius: 22px;
-    padding: 30px;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-}
-
-.card-box:hover {
-    transform: translateY(-4px);
-    box-shadow:
-        0 0 0 1px rgba(255, 213, 79, 0.18),
-        0 30px 90px rgba(0, 0, 0, 0.75);
-}
-
-/* ================= TOP ACTION ================= */
-.top-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 22px;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.action-btn {
-    background: linear-gradient(135deg, #1f2a44, #2b3760);
-    padding: 12px 22px;
-    border-radius: 14px;
-    color: #fff;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: var(--transition);
-    text-decoration: none;
-    border: none;
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-}
-
-/* ================= SEARCH ================= */
-.search-box {
-    background: rgba(17, 24, 41, 0.85);
-    border: 1px solid var(--border-color);
-    color: #fff;
-    padding: 12px 16px;
-    border-radius: 12px;
-    width: 260px;
-    font-size: 14px;
-    transition: var(--transition);
-}
-
-.search-box:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255, 213, 79, 0.2);
-}
-
-.search-box::placeholder {
-    color: var(--text-muted);
-}
-
-/* ================= TABLE ================= */
-.table {
-    background: transparent !important;
-    color: #fff;
-    margin-bottom: 0;
-}
-
-.table thead th {
-    background: rgba(255, 255, 255, 0.06);
-    font-size: 11px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    padding: 14px;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
-}
-
-.table tbody td {
-    padding: 16px;
-    border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
-    font-size: 14px;
-}
-
-.table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* ================= ARTIST PHOTO ================= */
-.artist-photo {
-    width: 80px;
-    height: 105px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* ================= ACTION BUTTON ================= */
-.btn-action {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-    margin-right: 8px;
-    border: none;
-    text-decoration: none;
-}
-
-.btn-edit {
-    background: rgba(255, 213, 79, 0.15);
-    color: #ffd54f;
-}
-
-.btn-edit:hover {
-    background: rgba(255, 213, 79, 0.35);
-    transform: scale(1.05);
-}
-
-.btn-delete {
-    background: rgba(255, 90, 90, 0.15);
-    color: #ff6b6b;
-}
-
-.btn-delete:hover {
-    background: rgba(255, 90, 90, 0.35);
-    transform: scale(1.05);
-}
-
-/* ================= PAGINATION ================= */
-.mt-3 {
-    margin-top: 20px !important;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin: 0;
-}
-
-.pagination .page-link {
-    background: rgba(17, 24, 41, 0.85);
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 0 2px;
-    transition: var(--transition);
-}
-
-.pagination .page-link:hover {
-    background: var(--hover-bg);
-    color: var(--accent);
-}
-
-.pagination .page-item.active .page-link {
-    background: var(--accent);
-    color: var(--bg-main);
-    border-color: var(--accent);
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
-    .bg-video {
-        display: none;
+    /* ================= THEME VARIABLES ================= */
+    :root {
+        --primary: #4318FF;
+        --primary-glow: rgba(67, 24, 255, 0.15);
+        --secondary: #A3AED0;
+        --navy: #1B2559;
+        --bg-body: #F4F7FE;
+        --white: #ffffff;
+        --border-color: #E0E5F2;
+        --danger: #EE5D50;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .sidebar {
+
+    /* Layout Wrapper */
+    .content-wrapper-modern {
+        padding: 40px 30px;
+        background-color: var(--bg-body);
+        min-height: 100vh;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         position: relative;
+        z-index: 1;
+    }
+
+    /* ================= BACKGROUND & GLASS ================= */
+    .bg-video {
+        position: fixed;
+        inset: 0;
         width: 100%;
-        height: auto;
-        padding: 20px;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+        filter: brightness(0.6);
+        pointer-events: none;
     }
-    .content {
-        margin-left: 0;
-        padding: 32px 22px;
+
+    .glass-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(244, 247, 254, 0.88);
+        z-index: -1;
+        backdrop-filter: blur(12px);
     }
-    .page-title {
-        font-size: 28px;
-        flex-direction: column;
+
+    /* ================= HEADER SECTION ================= */
+    .header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 35px;
+    }
+
+    .page-title-modern {
+        font-size: 34px;
+        font-weight: 800;
+        color: var(--navy);
+        letter-spacing: -1.5px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .breadcrumb-custom {
+        color: var(--secondary);
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* ================= CARD BOX ================= */
+    .card-box-modern {
+        background: var(--white);
+        border-radius: 30px;
+        padding: 35px;
+        border: none;
+        box-shadow: 0px 20px 40px rgba(112, 144, 176, 0.1);
+    }
+
+    /* ================= TOP ACTIONS ================= */
+    .top-actions-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .btn-add-modern {
+        background: var(--primary);
+        padding: 14px 28px;
+        border-radius: 16px;
+        color: #fff;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
         gap: 10px;
-        text-align: center;
+        transition: var(--transition);
+        text-decoration: none;
+        box-shadow: 0px 10px 20px rgba(67, 24, 255, 0.2);
     }
-    .top-actions {
-        flex-direction: column;
-        align-items: stretch;
+
+    .btn-add-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 15px 30px rgba(67, 24, 255, 0.3);
+        color: #fff;
     }
-    .search-box {
+
+    .search-input-group {
+        position: relative;
+        width: 350px;
+    }
+
+    .search-icon-inside {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--secondary);
+    }
+
+    .search-control-modern {
+        background: #F4F7FE;
+        border: 2px solid transparent;
+        padding: 14px 20px 14px 48px;
+        border-radius: 18px;
         width: 100%;
+        font-weight: 600;
+        transition: var(--transition);
+        color: var(--navy);
     }
-    .table-responsive {
-        overflow-x: auto;
+
+    .search-control-modern:focus {
+        outline: none;
+        background: var(--white);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 5px var(--primary-glow);
     }
-    .card-box {
+
+    /* ================= TABLE DESIGN ================= */
+    .table-modern {
+        border-collapse: separate;
+        border-spacing: 0 15px;
+    }
+
+    .table-modern thead th {
+        border: none;
+        color: var(--secondary);
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 800;
+        padding: 10px 20px;
+        letter-spacing: 1px;
+    }
+
+    .table-modern tbody tr {
+        background: var(--white);
+        box-shadow: 0px 5px 15px rgba(112, 144, 176, 0.08);
+        transition: var(--transition);
+    }
+
+    .table-modern tbody tr:hover {
+        transform: scale(1.005) translateX(5px);
+        box-shadow: 0px 10px 25px rgba(112, 144, 176, 0.15);
+    }
+
+    .table-modern tbody td {
         padding: 20px;
+        vertical-align: middle;
+        border: none;
     }
-    .artist-photo {
-        width: 60px;
-        height: 80px;
+
+    .table-modern tbody td:first-child { border-radius: 20px 0 0 20px; }
+    .table-modern tbody td:last-child { border-radius: 0 20px 20px 0; }
+
+    /* ================= AVATAR & BADGE ================= */
+    .artist-portrait-modern {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 20px;
+        border: 4px solid #F4F7FE;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        transition: var(--transition);
     }
-    .btn-action {
-        width: 32px;
-        height: 32px;
+
+    .artist-portrait-modern:hover {
+        transform: scale(1.1) rotate(3deg);
     }
-}
+
+    .placeholder-portrait {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        background: #F4F7FE;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--secondary);
+        font-size: 10px;
+        font-weight: 800;
+        border: 2px dashed var(--border-color);
+    }
+
+    .btn-circle-action {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        margin-left: 8px;
+        border: none;
+        text-decoration: none;
+    }
+
+    .btn-edit-light { background: #E9E3FF; color: var(--primary); }
+    .btn-edit-light:hover { background: var(--primary); color: #fff; }
+
+    .btn-delete-light { background: #FFE9E9; color: var(--danger); }
+    .btn-delete-light:hover { background: var(--danger); color: #fff; }
+
+    .loading-fade { opacity: 0.4; filter: grayscale(1); transition: 0.3s; }
 </style>
-</head>
 
-<body>
-
-<!-- BACKGROUND VIDEO -->
-<video autoplay muted loop playsinline class="bg-video"
-poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
+<video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
-
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
+<div class="content-wrapper-modern">
+    <div class="header-flex">
+        <div>
+            <div class="breadcrumb-custom">Masters &bull; Production</div>
+            <h1 class="page-title-modern">
+                <i class="fas fa-users text-primary"></i> Artists Database
+            </h1>
+        </div>
     </div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists" class="active"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
-        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
-    </ul>
-
-</div>
-
-<!-- CONTENT -->
-<div class="content">
-
-    <div class="page-title">
-        <i class="fas fa-microphone"></i> Artists
-    </div>
-    <p class="small-muted">Kelola data artist untuk event konser.</p>
-
-    <div class="card-box">
-
+    <div class="card-box-modern">
         <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+            <div class="alert alert-success d-flex align-items-center border-0 mb-4 shadow-sm" style="border-radius: 15px; background: #05cd99; color: #fff;">
+                <i class="fas fa-check-circle me-3 fs-5"></i>
+                <div class="fw-bold"><?= session()->getFlashdata('success') ?></div>
+            </div>
         <?php endif; ?>
 
-        <div class="top-actions">
-            <a href="/admin/masters/artists/create" class="action-btn">
-                <i class="fas fa-plus"></i> Tambah Artist
+        <div class="top-actions-bar">
+            <a href="/admin/masters/artists/create" class="btn-add-modern">
+                <i class="fas fa-plus-circle"></i> Add New Artist
             </a>
 
-            <form method="get">
-                <input type="text" class="search-box" name="keyword"
-                       placeholder="Search artist..." value="<?= $keyword ?? '' ?>">
-            </form>
+            <div class="search-input-group">
+                <i class="fas fa-search search-icon-inside"></i>
+                <input type="text" class="search-control-modern" id="ajaxSearch" 
+                       placeholder="Search artist name..." value="<?= $keyword ?? '' ?>" autocomplete="off">
+            </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th width="60">#</th>
-                        <th>Nama Artist</th>
-                        <th width="200">Foto</th>
-                        <th width="180">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (empty($artists)) : ?>
-                    <tr>
-                        <td colspan="4" class="text-center text-secondary">Tidak ada data.</td>
-                    </tr>
-                <?php else : ?>
-                    <?php $no = 1 + ($page - 1) * $perPage; ?>
-                    <?php foreach ($artists as $a) : ?>
-                    <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= $a['name'] ?></td>
-                        <td>
-                            <?php if ($a['photo']) : ?>
-                                <img src="/uploads/artists/<?= $a['photo'] ?>" class="artist-photo">
-                            <?php else : ?>
-                                <span class="text-secondary">No Image</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <a href="/admin/masters/artists/edit/<?= $a['id'] ?>" class="btn-action btn-edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="/admin/masters/artists/delete/<?= $a['id'] ?>"
-                               onclick="return confirm('Hapus artist ini?')"
-                               class="btn-action btn-delete">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <?php endforeach ?>
-                <?php endif ?>
-                </tbody>
-            </table>
-        </div>
+        <div id="artistContainer">
+            <div class="table-responsive">
+                <table class="table table-modern">
+                    <thead>
+                        <tr>
+                            <th width="80" class="ps-4">No</th>
+                            <th width="120">Portrait</th>
+                            <th>Artist Information</th>
+                            <th width="180" class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="artistTableBody">
+                        <?php if (empty($artists)) : ?>
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <i class="fas fa-user-slash fa-3x text-light mb-3 d-block"></i>
+                                    <h5 class="text-secondary fw-bold">No artists found</h5>
+                                    <p class="text-muted small">Try a different keyword or add a new artist.</p>
+                                </td>
+                            </tr>
+                        <?php else : ?>
+                            <?php $no = 1 + ($page - 1) * $perPage; ?>
+                            <?php foreach ($artists as $a) : ?>
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="fw-800 text-secondary">#<?= str_pad($no++, 2, '0', STR_PAD_LEFT) ?></span>
+                                </td>
+                                <td>
+                                    <?php if ($a['photo']) : ?>
+                                        <img src="/uploads/artists/<?= $a['photo'] ?>" class="artist-portrait-modern">
+                                    <?php else : ?>
+                                        <div class="placeholder-portrait">
+                                            <i class="fas fa-image mb-1 opacity-25"></i>
+                                            <span>EMPTY</span>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="fw-800" style="font-size: 18px; color: var(--navy);"><?= esc($a['name']) ?></div>
+                                    <div class="text-muted small fw-600">Verified Artist Profile</div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="/admin/masters/artists/edit/<?= $a['id'] ?>" class="btn-circle-action btn-edit-light" title="Edit Profile">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
+                                    <a href="/admin/masters/artists/delete/<?= $a['id'] ?>"
+                                       onclick="return confirm('Hapus artis ini secara permanen?')"
+                                       class="btn-circle-action btn-delete-light" title="Delete Artist">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach ?>
+                        <?php endif ?>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="mt-3">
-            <?= $pager->links('default','default_full') ?>
+            <div id="paginationLinks" class="d-flex justify-content-between align-items-center mt-4 px-2">
+                <div class="text-muted small fw-bold">
+                    Showing result for <span class="text-primary">"<?= esc($keyword ?? 'All Artists') ?>"</span>
+                </div>
+                <div>
+                    <?= $pager->links('default','default_full') ?>
+                </div>
+            </div>
         </div>
-
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-function toggleSubmenu(element) {
-    const submenu = element.nextElementSibling;
-    const icon = element.querySelector('i');
-    
-    if (submenu.classList.contains('open')) {
-        submenu.classList.remove('open');
-        icon.style.transform = 'rotate(0deg)';
-    } else {
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
-}
+$(document).ready(function() {
+    let searchTimer;
 
-// Auto-open submenu jika halaman aktif ada di dalamnya
-document.addEventListener('DOMContentLoaded', function() {
-    const activeLink = document.querySelector('.submenu a.active');
-    if (activeLink) {
-        const submenu = activeLink.closest('.submenu');
-        const sectionTitle = submenu.previousElementSibling;
-        const icon = sectionTitle.querySelector('i');
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
+    $('#ajaxSearch').on('keyup', function() {
+        let keyword = $(this).val();
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            fetchArtists(keyword);
+        }, 300);
+    });
+
+    function fetchArtists(keyword) {
+        $('#artistContainer').addClass('loading-fade');
+        $.ajax({
+            url: "<?= base_url('admin/masters/artists') ?>",
+            type: 'GET',
+            data: { keyword: keyword, is_ajax: 1 },
+            success: function(response) {
+                let newHtml = $(response).find('#artistContainer').html();
+                $('#artistContainer').html(newHtml).removeClass('loading-fade');
+            }
+        });
     }
+
+    $(document).on('click', '.pagination a', function(e) {
+        e.preventDefault();
+        let url = $(this).attr('href');
+        $('#artistContainer').addClass('loading-fade');
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                let newHtml = $(response).find('#artistContainer').html();
+                $('#artistContainer').html(newHtml).removeClass('loading-fade');
+                $('html, body').animate({ scrollTop: $(".card-box-modern").offset().top - 100 }, 200);
+            }
+        });
+    });
 });
 </script>
 
-</body>
-</html>
+<?= $this->endSection() ?>

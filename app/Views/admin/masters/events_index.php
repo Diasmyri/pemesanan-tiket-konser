@@ -1,430 +1,377 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Events - Admin Panel</title>
+<?= $this->extend('admin/layout/navbar') ?>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<?= $this->section('content') ?>
 
-    <style>
-        /* ================= ROOT ================= */
-        :root {
-            --bg-main: #0e1117;
-            --bg-sidebar: #111423;
-            --primary: #1f2a44;
-            --accent: #ffd54f;
-            --text-main: #ffffff;
-            --text-muted: #a1a6b3;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --hover-bg: rgba(255, 255, 255, 0.08);
-            --shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
-            --transition: all 0.35s ease;
-        }
+<style>
+    /* ================= THEME VARIABLES ================= */
+    :root {
+        --primary: #4318FF;
+        --primary-glow: rgba(67, 24, 255, 0.15);
+        --secondary: #A3AED0;
+        --navy: #1B2559;
+        --bg-body: #F4F7FE;
+        --white: #ffffff;
+        --border-color: #E0E5F2;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --danger: #EE5D50;
+        --warning: #FFB547;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    /* Layout Wrapper */
+    .content-wrapper-modern {
+        padding: 40px 30px;
+        background-color: var(--bg-body);
+        min-height: 100vh;
+        font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+        position: relative;
+        z-index: 1;
+    }
 
-        /* ================= BODY ================= */
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-main);
-            color: var(--text-main);
-            overflow-x: hidden;
-        }
+    /* ================= BACKGROUND & GLASS ================= */
+    .bg-video {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+        filter: brightness(0.6);
+        pointer-events: none;
+    }
 
-        /* ================= BACKGROUND VIDEO ================= */
-        .bg-video {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -3;
-            filter: brightness(0.65) saturate(0.9) blur(1.2px);
-            pointer-events: none;
-        }
+    .glass-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(244, 247, 254, 0.88);
+        z-index: -1;
+        backdrop-filter: blur(12px);
+    }
 
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
-                linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85));
-            z-index: -2;
-            pointer-events: none;
-        }
+    /* ================= HEADER SECTION ================= */
+    .header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 35px;
+    }
 
-        /* ================= SIDEBAR ================= */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            background: linear-gradient(180deg, #111423, #0d101a);
-            border-right: 1px solid var(--border-color);
-            padding: 32px 24px;
-            z-index: 1000;
-            overflow-y: auto;
-        }
+    .page-title-modern {
+        font-size: 34px;
+        font-weight: 800;
+        color: var(--navy);
+        letter-spacing: -1.5px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-        .brand {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 42px;
-            letter-spacing: 0.5px;
-        }
+    .breadcrumb-custom {
+        color: var(--secondary);
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 
-        .section-title {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin: 30px 0 12px;
-            letter-spacing: 1.6px;
-            text-transform: uppercase;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            transition: var(--transition);
-        }
+    /* ================= CARD BOX ================= */
+    .card-box-modern {
+        background: var(--white);
+        border-radius: 30px;
+        padding: 35px;
+        border: none;
+        box-shadow: 0px 20px 40px rgba(112, 144, 176, 0.1);
+    }
 
-        .section-title:hover {
-            color: var(--accent);
-        }
+    /* ================= TOP ACTIONS ================= */
+    .top-actions-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
 
-        .submenu {
-            display: none;
-            margin-left: 16px;
-            padding-left: 0;
-            list-style: none;
-        }
+    .btn-add-event {
+        background: var(--primary);
+        padding: 14px 28px;
+        border-radius: 16px;
+        color: #fff;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition);
+        text-decoration: none;
+        box-shadow: 0px 10px 20px rgba(67, 24, 255, 0.2);
+    }
 
-        .submenu.open {
-            display: block;
-        }
+    .btn-add-event:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 15px 30px rgba(67, 24, 255, 0.3);
+        color: #fff;
+    }
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: var(--text-main);
-            text-decoration: none;
-            border-radius: 12px;
-            transition: var(--transition);
-        }
+    .search-input-group {
+        position: relative;
+        width: 350px;
+    }
 
-        .sidebar a:hover {
-            background: var(--hover-bg);
-            transform: translateX(6px);
-        }
+    .search-icon-inside {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--secondary);
+    }
 
-        .sidebar a.active {
-            background: linear-gradient(135deg, #1f2a44, #2b3760);
-            font-weight: 600;
-            box-shadow: var(--shadow);
-        }
+    .search-control-modern {
+        background: #F4F7FE;
+        border: 2px solid transparent;
+        padding: 14px 20px 14px 48px;
+        border-radius: 18px;
+        width: 100%;
+        font-weight: 600;
+        transition: var(--transition);
+        color: var(--navy);
+    }
 
-        /* ================= CONTENT ================= */
-        .content {
-            margin-left: 260px;
-            padding: 50px 60px;
-            position: relative;
-            z-index: 5;
-        }
+    .search-control-modern:focus {
+        outline: none;
+        background: var(--white);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 5px var(--primary-glow);
+    }
 
-        .page-title {
-            font-size: 38px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
-        }
+    /* ================= TABLE DESIGN ================= */
+    .table-modern {
+        border-collapse: separate;
+        border-spacing: 0 15px;
+    }
 
-        .small-muted {
-            color: var(--text-muted);
-            margin-bottom: 36px;
-            opacity: 0.85;
-        }
+    .table-modern thead th {
+        border: none;
+        color: var(--secondary);
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 800;
+        padding: 10px 20px;
+        letter-spacing: 1px;
+    }
 
-        /* ================= ALERT ================= */
-        .alert {
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
+    .table-modern tbody tr {
+        background: var(--white);
+        box-shadow: 0px 5px 15px rgba(112, 144, 176, 0.08);
+        transition: var(--transition);
+    }
 
-        .alert-success {
-            background: rgba(40, 167, 69, 0.15);
-            color: #28a745;
-            border: 1px solid rgba(40, 167, 69, 0.3);
-        }
+    .table-modern tbody tr:hover {
+        transform: scale(1.005) translateX(5px);
+        box-shadow: 0px 10px 25px rgba(112, 144, 176, 0.15);
+    }
 
-        .alert-danger {
-            background: rgba(220, 53, 69, 0.15);
-            color: #dc3545;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
+    .table-modern tbody td {
+        padding: 20px;
+        vertical-align: middle;
+        border: none;
+    }
 
-        /* ================= CARD (GLASS) ================= */
-        .card-box {
-            position: relative;
-            background: linear-gradient(160deg, rgba(26, 31, 46, 0.88), rgba(20, 24, 38, 0.88));
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color);
-            border-radius: 22px;
-            padding: 30px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
+    .table-modern tbody td:first-child { border-radius: 20px 0 0 20px; }
+    .table-modern tbody td:last-child { border-radius: 0 20px 20px 0; }
 
-        .card-box:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 0 0 1px rgba(255, 213, 79, 0.18), 0 30px 90px rgba(0, 0, 0, 0.75);
-        }
+    /* ================= COMPONENTS ================= */
+    .event-poster-modern {
+        width: 70px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        transition: var(--transition);
+    }
 
-        /* ================= TOP ACTION ================= */
-        .top-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 22px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+    .event-poster-modern:hover {
+        transform: scale(1.15) rotate(2deg);
+        z-index: 10;
+    }
 
-        .action-btn {
-            background: linear-gradient(135deg, #1f2a44, #2b3760);
-            padding: 12px 22px;
-            border-radius: 14px;
-            color: #fff;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
-            text-decoration: none;
-            border: none;
-        }
+    .venue-badge {
+        background: #E9F3FF;
+        color: #0061FF;
+        padding: 6px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 12px;
+    }
 
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-            color: #fff;
-        }
+    .time-badge {
+        background: #F4F7FE;
+        color: var(--navy);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 12px;
+    }
 
-        /* ================= SEARCH ================= */
-        .search-box {
-            background: rgba(17, 24, 41, 0.85);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            padding: 12px 16px;
-            border-radius: 12px;
-            width: 260px;
-            font-size: 14px;
-            transition: var(--transition);
-        }
+    .btn-circle-action {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        border: none;
+        text-decoration: none;
+        margin-left: 5px;
+    }
 
-        .search-box:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(255, 213, 79, 0.2);
-        }
+    .btn-edit-light { background: #E9E3FF; color: var(--primary); }
+    .btn-edit-light:hover { background: var(--primary); color: #fff; }
 
-        /* ================= TABLE ================= */
-        .table {
-            background: transparent !important;
-            color: #fff;
-        }
+    .btn-delete-light { background: #FFE9E9; color: var(--danger); }
+    .btn-delete-light:hover { background: var(--danger); color: #fff; }
 
-        .table thead th {
-            background: rgba(255, 255, 255, 0.06);
-            font-size: 11px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding: 14px;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-        }
+    .locked-badge {
+        background: #F4F7FE;
+        color: var(--secondary);
+        padding: 8px 15px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
 
-        .table tbody td {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            font-size: 14px;
-        }
+    /* PAGINATION CUSTOM */
+    .pagination-wrapper {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+    }
 
-        .table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
+    @media (max-width: 992px) {
+        .header-flex { flex-direction: column; align-items: flex-start; gap: 15px; }
+        .top-actions-bar { flex-direction: column; align-items: stretch; }
+        .search-input-group { width: 100%; }
+    }
+</style>
 
-        .event-poster {
-            width: 60px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        /* ================= ACTION BUTTON ================= */
-        .btn-action {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            margin-right: 8px;
-            border: none;
-            text-decoration: none;
-        }
-
-        .btn-edit { background: rgba(255, 213, 79, 0.15); color: #ffd54f; }
-        .btn-edit:hover { background: rgba(255, 213, 79, 0.35); transform: scale(1.05); }
-
-        .btn-delete { background: rgba(255, 90, 90, 0.15); color: #ff6b6b; }
-        .btn-delete:hover { background: rgba(255, 90, 90, 0.35); transform: scale(1.05); }
-
-        /* ================= PAGINATION ================= */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar { position: relative; width: 100%; height: auto; }
-            .content { margin-left: 0; padding: 32px 22px; }
-            .top-actions { flex-direction: column; align-items: stretch; }
-        }
-    </style>
-</head>
-
-<body>
-
-<video autoplay muted loop playsinline class="bg-video"
-poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
+<video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
+<div class="glass-overlay"></div>
 
-<div class="sidebar">
-    <div class="brand">Admin Panel - Ticketing</div>
-    <div class="section-title">MAIN</div>
-    <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
-
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
+<div class="content-wrapper-modern">
+    <div class="header-flex">
+        <div>
+            <div class="breadcrumb-custom">Masters &bull; Schedule</div>
+            <h1 class="page-title-modern">
+                <i class="fas fa-calendar-alt text-primary"></i> Events Management
+            </h1>
+        </div>
     </div>
-    <ul class="submenu">
-        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
-        <li><a href="/admin/masters/events" class="active"><i class="fas fa-calendar-days"></i> Events</a></li>
-        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
-        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
-        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
-    </ul>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
-        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
-        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
-    </ul>
-
-</div>
-
-<div class="content">
-    <div class="page-title">
-        <i class="fas fa-calendar-days"></i> Events
-    </div>
-    <p class="small-muted">Kelola data event konser.</p>
-
-    <div class="card-box">
+    <div class="card-box-modern">
         <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-        <?php endif; ?>
-        <?php if (session()->getFlashdata('error')) : ?>
-            <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+            <div class="alert alert-success d-flex align-items-center border-0 mb-4 shadow-sm" style="border-radius: 15px; background: #05cd99; color: #fff;">
+                <i class="fas fa-check-circle me-3 fs-5"></i>
+                <div class="fw-bold"><?= session()->getFlashdata('success') ?></div>
+            </div>
         <?php endif; ?>
 
-        <div class="top-actions">
-            <a href="/admin/masters/events/create" class="action-btn">
-                <i class="fas fa-plus"></i> Tambah Event
+        <?php if (session()->getFlashdata('error')) : ?>
+            <div class="alert alert-danger d-flex align-items-center border-0 mb-4 shadow-sm" style="border-radius: 15px; background: #ee5d50; color: #fff;">
+                <i class="fas fa-exclamation-triangle me-3 fs-5"></i>
+                <div class="fw-bold"><?= session()->getFlashdata('error') ?></div>
+            </div>
+        <?php endif; ?>
+
+        <div class="top-actions-bar">
+            <a href="/admin/masters/events/create" class="btn-add-event">
+                <i class="fas fa-plus-circle"></i> Create New Event
             </a>
-            <form method="get">
-                <input type="text" class="search-box" name="keyword"
-                       placeholder="Cari judul, artis, venue..." value="<?= esc($keyword ?? '') ?>">
+            <form method="get" class="search-input-group">
+                <i class="fas fa-search search-icon-inside"></i>
+                <input type="text" class="search-control-modern" name="keyword"
+                       placeholder="Search title, artist, or venue..." value="<?= esc($keyword ?? '') ?>">
             </form>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-modern">
                 <thead>
                     <tr>
-                        <th width="70">Poster</th>
-                        <th>Judul</th>
-                        <th>Artist</th>
-                        <th>Venue</th>
-                        <th>Tanggal</th>
-                        <th>Jam</th>
-                        <th width="150">Aksi</th>
+                        <th width="100">Poster</th>
+                        <th>Event Details</th>
+                        <th>Featured Artists</th>
+                        <th>Venue Location</th>
+                        <th>Schedule</th>
+                        <th width="150" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php if (empty($events)) : ?>
                     <tr>
-                        <td colspan="7" class="text-center text-secondary">Tidak ada data.</td>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-3x text-light mb-3 d-block"></i>
+                            <h5 class="text-secondary fw-bold">No events found</h5>
+                            <p class="text-muted small">Try adjusting your search or add a new event.</p>
+                        </td>
                     </tr>
                 <?php else : ?>
                     <?php foreach ($events as $e) : ?>
                     <tr>
                         <td>
                             <?php if ($e['poster']) : ?>
-                                <img src="/uploads/events/<?= $e['poster'] ?>" class="event-poster">
+                                <img src="/uploads/events/<?= $e['poster'] ?>" class="event-poster-modern">
                             <?php else : ?>
-                                <span class="text-secondary">No Image</span>
+                                <div class="d-flex align-items-center justify-content-center bg-light text-muted fw-bold" style="width:70px; height:90px; border-radius:15px; font-size:10px; border:2px dashed #ddd;">
+                                    NO POSTER
+                                </div>
                             <?php endif; ?>
                         </td>
-                        <td><?= esc($e['title']) ?></td>
+                        <td>
+                            <div class="fw-800" style="font-size: 16px; color: var(--navy);"><?= esc($e['title']) ?></div>
+                            <div class="text-muted small fw-600">ID: #EVT-<?= $e['id'] ?></div>
+                        </td>
                         <td>
                             <?php if (!empty($e['artists'])): ?>
-                                <?= esc(implode(', ', array_column($e['artists'], 'name'))) ?>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <?php foreach($e['artists'] as $artist): ?>
+                                        <span class="badge bg-white text-primary border border-primary-glow" style="border-radius:6px;"><?= esc($artist['name']) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
                             <?php else: ?>
-                                -
+                                <span class="text-muted small">No artists assigned</span>
                             <?php endif; ?>
                         </td>
-                        <td><?= esc($e['venue_name']) ?></td>
-                        <td><?= date('d M Y', strtotime($e['date'])) ?></td>
-                        <td><?= substr($e['start_time'],0,5) ?> - <?= substr($e['end_time'],0,5) ?></td>
                         <td>
+                            <span class="venue-badge">
+                                <i class="fas fa-map-marker-alt me-1"></i> <?= esc($e['venue_name']) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-navy" style="font-size: 14px;"><?= date('d M Y', strtotime($e['date'])) ?></div>
+                            <div class="mt-1">
+                                <span class="time-badge">
+                                    <i class="far fa-clock me-1"></i> <?= substr($e['start_time'],0,5) ?> - <?= substr($e['end_time'],0,5) ?>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-end">
                             <?php if($e['editable']): ?>
-                                <a href="/admin/masters/events/edit/<?= $e['id'] ?>" class="btn-action btn-edit" title="Edit">
-                                    <i class="fas fa-edit"></i>
+                                <a href="/admin/masters/events/edit/<?= $e['id'] ?>" class="btn-circle-action btn-edit-light" title="Edit Event">
+                                    <i class="fas fa-pencil-alt"></i>
                                 </a>
                             <?php else: ?>
-                                <span class="badge bg-secondary" style="font-size:10px;">Locked</span>
+                                <span class="locked-badge" title="Event has active transactions">
+                                    <i class="fas fa-lock me-1"></i> Locked
+                                </span>
                             <?php endif; ?>
 
                             <a href="/admin/masters/events/delete/<?= $e['id'] ?>"
                                onclick="return confirm('Hapus event ini? Semua data terkait akan hilang.')"
-                               class="btn-action btn-delete" title="Hapus">
-                                <i class="fas fa-trash"></i>
+                               class="btn-circle-action btn-delete-light" title="Delete Permanent">
+                                <i class="fas fa-trash-alt"></i>
                             </a>
                         </td>
                     </tr>
@@ -434,13 +381,14 @@ poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format
             </table>
         </div>
 
-        <div class="pagination">
+        <div class="pagination-wrapper">
             <?= $pager->links('default', 'default_full') ?>
         </div>
     </div>
 </div>
 
 <script>
+// Logic Sidebar Toggle (Original)
 function toggleSubmenu(element) {
     const submenu = element.nextElementSibling;
     const icon = element.querySelector('i');
@@ -448,6 +396,7 @@ function toggleSubmenu(element) {
     icon.style.transform = submenu.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
 }
 
+// Auto-open submenu (Original)
 document.addEventListener('DOMContentLoaded', function() {
     const activeLink = document.querySelector('.submenu a.active');
     if (activeLink) {
@@ -460,5 +409,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-</body>
-</html>
+<?= $this->endSection() ?>

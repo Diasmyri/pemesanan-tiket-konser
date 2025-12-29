@@ -111,8 +111,6 @@ $routes->group('admin', function ($routes) {
         $routes->get('harian/exportExcel', 'Harian::exportExcel');
         // ------------------------------
 
-        // Laporan Bulanan
-        $routes->get('bulanan', 'Bulanan::index');
     });
 
 });
