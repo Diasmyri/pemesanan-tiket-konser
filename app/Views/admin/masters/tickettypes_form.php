@@ -397,16 +397,9 @@ poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format
         <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
         <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
         <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds/create"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
+        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
     </ul>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        LAPORAN <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/reports/daily"><i class="fas fa-clock"></i> Harian</a></li>
-        <li><a href="/admin/reports/monthly"><i class="fas fa-calendar"></i> Bulanan</a></li>
-    </ul>
 </div>
 
 <!-- CONTENT -->

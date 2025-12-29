@@ -10,88 +10,60 @@ class Checkin extends BaseController
 {
     protected $checkinModel;
     protected $orderModel;
+    protected $db;
 
     public function __construct()
     {
         $this->checkinModel = new CheckinModel();
         $this->orderModel   = new OrderModel();
+        $this->db           = \Config\Database::connect();
     }
 
-    // ============================
-    // LIST CHECK-IN
-    // ============================
     public function index()
     {
-        $data['title'] = "Check-in";
+        $data['title'] = "Check-in Management";
 
-        $data['checkins'] = $this->checkinModel
-            ->select('checkins.*, users.nama AS user_name, events.title AS event_name, ticket_types.name AS ticket_type_name')
-            ->join('orders', 'orders.id = checkins.order_id')
-            ->join('users', 'users.id = orders.user_id')
-            ->join('events', 'events.id = orders.event_id')
-            ->join('ticket_types', 'ticket_types.id = orders.ticket_type_id')
-            ->orderBy('checkins.id', 'DESC')
-            ->findAll();
+        // Ambil SEMUA data yang sudah PAYMENT APPROVED
+        // Digabung dengan LEFT JOIN ke tabel checkins untuk tahu mana yang sudah/belum check-in
+        $data['checkins'] = $this->db->table('payments p')
+            ->select('
+                p.order_id, 
+                p.ticket_code, 
+                u.nama AS user_name, 
+                e.title AS event_name, 
+                tt.name AS ticket_type_name,
+                c.checked_in_at,
+                c.status AS checkin_status
+            ')
+            ->join('orders o', 'o.id = p.order_id')
+            ->join('users u', 'u.id = o.user_id')
+            ->join('events e', 'e.id = o.event_id')
+            ->join('ticket_types tt', 'tt.id = o.ticket_type_id')
+            ->join('checkins c', 'c.order_id = p.order_id', 'left') // Left join supaya data yang belum check-in tetep muncul
+            ->where('p.status', 'approved')
+            ->orderBy('c.checked_in_at', 'ASC')
+            ->get()->getResultArray();
 
         return view('admin/transactions/checkin_index', $data);
     }
 
-    // ============================
-    // FORM CHECK-IN
-    // ============================
-    public function create()
+    // FUNGSI UNTUK PROSES CHECK-IN MANUAL
+    public function process($orderId)
     {
-        $data['title'] = "Create Check-in";
+        // Cek dulu apakah sudah pernah check-in
+        $existing = $this->checkinModel->where('order_id', $orderId)->first();
 
-        $data['orders'] = $this->orderModel
-            ->select('orders.id, users.nama AS user_name, events.title AS event_name, ticket_types.name AS ticket_type_name')
-            ->join('users', 'users.id = orders.user_id')
-            ->join('events', 'events.id = orders.event_id')
-            ->join('ticket_types', 'ticket_types.id = orders.ticket_type_id')
-            ->whereNotIn('orders.id', function ($builder) {
-                return $builder->select('order_id')->from('checkins');
-            })
-            ->findAll();
-
-        return view('admin/transactions/checkin_form', $data);
-    }
-
-    // ============================
-    // SIMPAN CHECK-IN
-    // ============================
-    public function store()
-    {
-        $orderId = $this->request->getPost('order_id');
-
-        if (!$orderId) {
-            return redirect()->back()->with('error', 'Order belum dipilih.');
+        if ($existing) {
+            return redirect()->back()->with('error', 'Tiket ini sudah pernah check-in sebelumnya.');
         }
 
+        // Simpan data ke tabel checkins
         $this->checkinModel->save([
             'order_id'      => $orderId,
             'checked_in_at' => date('Y-m-d H:i:s'),
             'status'        => 'checked_in',
         ]);
 
-        return redirect()->to('/admin/transactions/checkin')->with('success', 'Check-in berhasil.');
-    }
-
-    // ============================
-    // DETAIL CHECK-IN
-    // ============================
-    public function show($id)
-    {
-        $data['title'] = "Detail Check-in";
-
-        $data['checkin'] = $this->checkinModel
-            ->select('checkins.*, users.nama AS user_name, events.title AS event_name, ticket_types.name AS ticket_type_name')
-            ->join('orders', 'orders.id = checkins.order_id')
-            ->join('users', 'users.id = orders.user_id')
-            ->join('events', 'events.id = orders.event_id')
-            ->join('ticket_types', 'ticket_types.id = orders.ticket_type_id')
-            ->where('checkins.id', $id)
-            ->first();
-
-        return view('admin/transactions/checkin_detail', $data);
+        return redirect()->to('/admin/transactions/checkin')->with('success', 'Check-in Berhasil! Silakan persilakan user masuk.');
     }
 }

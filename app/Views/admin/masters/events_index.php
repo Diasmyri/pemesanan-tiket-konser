@@ -48,7 +48,6 @@
             pointer-events: none;
         }
 
-        /* GLOBAL OVERLAY (LEMBUT BIAR VIDEO KELIATAN) */
         body::after {
             content: "";
             position: fixed;
@@ -101,10 +100,6 @@
             color: var(--accent);
         }
 
-        .section-title i {
-            transition: var(--transition);
-        }
-
         .submenu {
             display: none;
             margin-left: 16px;
@@ -148,7 +143,6 @@
             z-index: 5;
         }
 
-        /* ================= PAGE HEADER ================= */
         .page-title {
             font-size: 38px;
             font-weight: 700;
@@ -178,15 +172,16 @@
             border: 1px solid rgba(40, 167, 69, 0.3);
         }
 
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.15);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
         /* ================= CARD (GLASS) ================= */
         .card-box {
             position: relative;
-            background:
-                linear-gradient(
-                    160deg,
-                    rgba(26, 31, 46, 0.88),
-                    rgba(20, 24, 38, 0.88)
-                );
+            background: linear-gradient(160deg, rgba(26, 31, 46, 0.88), rgba(20, 24, 38, 0.88));
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
@@ -198,9 +193,7 @@
 
         .card-box:hover {
             transform: translateY(-4px);
-            box-shadow:
-                0 0 0 1px rgba(255, 213, 79, 0.18),
-                0 30px 90px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 0 0 1px rgba(255, 213, 79, 0.18), 0 30px 90px rgba(0, 0, 0, 0.75);
         }
 
         /* ================= TOP ACTION ================= */
@@ -230,6 +223,7 @@
         .action-btn:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow);
+            color: #fff;
         }
 
         /* ================= SEARCH ================= */
@@ -248,10 +242,6 @@
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 2px rgba(255, 213, 79, 0.2);
-        }
-
-        .search-box::placeholder {
-            color: var(--text-muted);
         }
 
         /* ================= TABLE ================= */
@@ -281,11 +271,6 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* ================= EVENT POSTER ================= */
         .event-poster {
             width: 60px;
             height: 80px;
@@ -308,108 +293,36 @@
             text-decoration: none;
         }
 
-        .btn-edit {
-            background: rgba(255, 213, 79, 0.15);
-            color: #ffd54f;
-        }
+        .btn-edit { background: rgba(255, 213, 79, 0.15); color: #ffd54f; }
+        .btn-edit:hover { background: rgba(255, 213, 79, 0.35); transform: scale(1.05); }
 
-        .btn-edit:hover {
-            background: rgba(255, 213, 79, 0.35);
-            transform: scale(1.05);
-        }
-
-        .btn-delete {
-            background: rgba(255, 90, 90, 0.15);
-            color: #ff6b6b;
-        }
-
-        .btn-delete:hover {
-            background: rgba(255, 90, 90, 0.35);
-            transform: scale(1.05);
-        }
+        .btn-delete { background: rgba(255, 90, 90, 0.15); color: #ff6b6b; }
+        .btn-delete:hover { background: rgba(255, 90, 90, 0.35); transform: scale(1.05); }
 
         /* ================= PAGINATION ================= */
-        .mt-3 {
-            margin-top: 20px !important;
-        }
-
         .pagination {
             display: flex;
             justify-content: center;
-            margin: 0;
+            margin-top: 20px;
         }
 
-        .pagination .page-link {
-            background: rgba(17, 24, 41, 0.85);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin: 0 2px;
-            transition: var(--transition);
-        }
-
-        .pagination .page-link:hover {
-            background: var(--hover-bg);
-            color: var(--accent);
-        }
-
-        .pagination .page-item.active .page-link {
-            background: var(--accent);
-            color: var(--bg-main);
-            border-color: var(--accent);
-        }
-
-        /* ================= RESPONSIVE ================= */
         @media (max-width: 768px) {
-            .bg-video {
-                display: none;
-            }
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                padding: 20px;
-            }
-            .content {
-                margin-left: 0;
-                padding: 32px 22px;
-            }
-            .page-title {
-                font-size: 28px;
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            .top-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .search-box {
-                width: 100%;
-            }
-            .table-responsive {
-                overflow-x: auto;
-            }
-            .card-box {
-                padding: 20px;
-            }
+            .sidebar { position: relative; width: 100%; height: auto; }
+            .content { margin-left: 0; padding: 32px 22px; }
+            .top-actions { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- BACKGROUND VIDEO -->
 <video autoplay muted loop playsinline class="bg-video"
 poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="brand">Admin Panel - Ticketing</div>
-
     <div class="section-title">MAIN</div>
     <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
 
@@ -431,124 +344,99 @@ poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format
         <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
         <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
         <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
-        <li><a href="/admin/transactions/refunds/create"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
+        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
     </ul>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        LAPORAN <i class="fas fa-chevron-down"></i>
-    </div>
-    <ul class="submenu">
-        <li><a href="/admin/reports/daily"><i class="fas fa-clock"></i> Harian</a></li>
-        <li><a href="/admin/reports/monthly"><i class="fas fa-calendar"></i> Bulanan</a></li>
-    </ul>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
-
     <div class="page-title">
         <i class="fas fa-calendar-days"></i> Events
     </div>
     <p class="small-muted">Kelola data event konser.</p>
 
-   <div class="card-box">
+    <div class="card-box">
+        <?php if (session()->getFlashdata('success')) : ?>
+            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+        <?php endif; ?>
+        <?php if (session()->getFlashdata('error')) : ?>
+            <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+        <?php endif; ?>
 
-    <?php if (session()->getFlashdata('success')) : ?>
-        <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-    <?php endif; ?>
-    <?php if (session()->getFlashdata('error')) : ?>
-        <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-    <?php endif; ?>
-
-    <!-- TOP ACTIONS: TAMBAH EVENT & SEARCH -->
-    <div class="top-actions">
-        <a href="/admin/masters/events/create" class="action-btn">
-            <i class="fas fa-plus"></i> Tambah Event
-        </a>
-
-        <form method="get" style="display:inline-block;">
-            <input type="text" class="search-box" name="keyword"
-                   placeholder="Search event..." value="<?= $keyword ?? '' ?>">
-        </form>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th width="70">Poster</th>
-                    <th>Judul</th>
-                    <th>Artist</th>
-                    <th>Venue</th>
-                    <th>Tanggal</th>
-                    <th>Jam</th>
-                    <th width="180">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php if (empty($events)) : ?>
-                <tr>
-                    <td colspan="7" class="text-center text-secondary">Tidak ada data.</td>
-                </tr>
-            <?php else : ?>
-                <?php foreach ($events as $e) : 
-                    $eventTimestamp = strtotime($e['date'].' '.$e['start_time']);
-                    $now = time();
-                    $canEdit = ($eventTimestamp - $now) > 86400; // 1 hari sebelum event
-                ?>
-                <tr>
-                    <td>
-                        <?php if ($e['poster']) : ?>
-                            <img src="/uploads/events/<?= $e['poster'] ?>" class="event-poster">
-                        <?php else : ?>
-                            <span class="text-secondary">No Image</span>
-                        <?php endif; ?>
-                    </td>
-                    <td><?= $e['title'] ?></td>
-                    <td>
-                        <?php if (!empty($e['artists'])): ?>
-                            <?= implode(', ', array_column($e['artists'], 'name')) ?>
-                        <?php else: ?>
-                            -
-                        <?php endif; ?>
-                    </td>
-                    <td><?= $e['venue_name'] ?></td>
-                    <td><?= $e['date'] ?></td>
-                    <td><?= $e['start_time'] ?> - <?= $e['end_time'] ?></td>
-                    <td>
-                        <?php if($canEdit): ?>
-                            <a href="/admin/masters/events/edit/<?= $e['id'] ?>" class="btn-action btn-edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                        <?php else: ?>
-                            <span class="text-muted" style="font-size:12px;">Tidak bisa diedit</span>
-                        <?php endif; ?>
-
-                        <a href="/admin/masters/events/delete/<?= $e['id'] ?>"
-                           onclick="return confirm('Hapus event ini?')"
-                           class="btn-action btn-delete">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                <?php endforeach ?>
-            <?php endif ?>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mt-3">
-        <?= $pager->links('default','default_full') ?>
-    </div>
-
-</div>
-
-
-
-        <div class="mt-3">
-            <?= $pager->links('default','default_full') ?>
+        <div class="top-actions">
+            <a href="/admin/masters/events/create" class="action-btn">
+                <i class="fas fa-plus"></i> Tambah Event
+            </a>
+            <form method="get">
+                <input type="text" class="search-box" name="keyword"
+                       placeholder="Cari judul, artis, venue..." value="<?= esc($keyword ?? '') ?>">
+            </form>
         </div>
 
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th width="70">Poster</th>
+                        <th>Judul</th>
+                        <th>Artist</th>
+                        <th>Venue</th>
+                        <th>Tanggal</th>
+                        <th>Jam</th>
+                        <th width="150">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if (empty($events)) : ?>
+                    <tr>
+                        <td colspan="7" class="text-center text-secondary">Tidak ada data.</td>
+                    </tr>
+                <?php else : ?>
+                    <?php foreach ($events as $e) : ?>
+                    <tr>
+                        <td>
+                            <?php if ($e['poster']) : ?>
+                                <img src="/uploads/events/<?= $e['poster'] ?>" class="event-poster">
+                            <?php else : ?>
+                                <span class="text-secondary">No Image</span>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= esc($e['title']) ?></td>
+                        <td>
+                            <?php if (!empty($e['artists'])): ?>
+                                <?= esc(implode(', ', array_column($e['artists'], 'name'))) ?>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+                        <td><?= esc($e['venue_name']) ?></td>
+                        <td><?= date('d M Y', strtotime($e['date'])) ?></td>
+                        <td><?= substr($e['start_time'],0,5) ?> - <?= substr($e['end_time'],0,5) ?></td>
+                        <td>
+                            <?php if($e['editable']): ?>
+                                <a href="/admin/masters/events/edit/<?= $e['id'] ?>" class="btn-action btn-edit" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            <?php else: ?>
+                                <span class="badge bg-secondary" style="font-size:10px;">Locked</span>
+                            <?php endif; ?>
+
+                            <a href="/admin/masters/events/delete/<?= $e['id'] ?>"
+                               onclick="return confirm('Hapus event ini? Semua data terkait akan hilang.')"
+                               class="btn-action btn-delete" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endforeach ?>
+                <?php endif ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <?= $pager->links('default', 'default_full') ?>
+        </div>
     </div>
 </div>
 
@@ -556,17 +444,10 @@ poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format
 function toggleSubmenu(element) {
     const submenu = element.nextElementSibling;
     const icon = element.querySelector('i');
-    
-    if (submenu.classList.contains('open')) {
-        submenu.classList.remove('open');
-        icon.style.transform = 'rotate(0deg)';
-    } else {
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
+    submenu.classList.toggle('open');
+    icon.style.transform = submenu.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
 }
 
-// Auto-open submenu jika halaman aktif ada di dalamnya
 document.addEventListener('DOMContentLoaded', function() {
     const activeLink = document.querySelector('.submenu a.active');
     if (activeLink) {

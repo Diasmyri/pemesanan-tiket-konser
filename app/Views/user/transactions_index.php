@@ -228,38 +228,51 @@ body {
         <h2 style="font-weight:900; opacity:0.2; font-size:4rem; margin:0;">NO_DATA_FOUND</h2>
       </div>
     <?php else: $no=1; foreach ($orders as $o): ?>
-      <?php
-        $orderStatus   = $o['order_status'];
-        $paymentStatus = $o['payment_status']; 
-        $refundStatus  = $o['refund_status'];
-        $ticketCode    = $o['ticket_code'];
+      <?php 
+    // Mengambil data dengan pengaman default null
+    $orderStatus   = $o['order_status'] ?? 'pending';
+    $refundStatus  = $o['refund_status'] ?? null;
+    $ticketCode    = $o['ticket_code'] ?? '';
+    $checkinStatus = $o['checkin_status'] ?? null; 
 
-        // LOGIKA PENENTU STATUS (DISESUAIKAN DENGAN DB)
-        if ($refundStatus === 'refunded' || $orderStatus === 'refunded') {
-            $badge = '<div class="badge-brutal">💸 REFUNDED</div>';
-            $btnAction = '<small style="color:#444; font-weight:800; font-family:\'Space Mono\'">CLOSED</small>';
-        } elseif ($refundStatus === 'pending' || $orderStatus === 'refund_pending' || $paymentStatus === 'refund_process') {
-            $badge = '<div class="badge-brutal status-refund">⏳ PROCESSING</div>';
-            $btnAction = '<small style="color:var(--accent); font-weight:800; font-family:\'Space Mono\'">ON_REVIEW</small>';
-        } elseif ($orderStatus === 'paid') {
-            $badge = '<div class="badge-brutal status-paid">✅ CONFIRMED</div>';
-            $btnAction = '
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-brutal btn-ticket" onclick="viewTicket(\''.$ticketCode.'\')">VIEW_TICKET</button>
-                    <button class="btn-brutal" style="border-color:#444; color:#666;" onclick="openRefund('.$o['id'].')">REFUND</button>
-                </div>';
-        } elseif (in_array($orderStatus, ['pending', 'Menunggu Bayar'])) {
-            $badge = '<div class="badge-brutal status-pending">⚠️ UNPAID</div>';
-            $btnAction = '
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-brutal btn-pay" onclick="openPay('.$o['id'].')">PAY_NOW</button>
-                    <button class="btn-brutal" style="border-color:#ff4d4d; color:#ff4d4d" onclick="cancelOrder('.$o['id'].')">CANCEL</button>
-                </div>';
-        } else {
-            $badge = '<div class="badge-brutal">'.strtoupper(esc($orderStatus)).'</div>';
-            $btnAction = '-';
-        }
-      ?>
+    // 1. PRIORITAS: JIKA SUDAH CHECK-IN
+    if ($checkinStatus === 'checked_in') {
+        $badge = '<div class="badge-brutal" style="background:#00ff88; color:#000; border-color:#fff;">🎟️ IN GATE</div>';
+        $btnAction = '<div style="background:rgba(0,255,136,0.1); padding:10px; border:1px dashed #00ff88; text-align:center;">
+                        <small style="color:#00ff88; font-weight:800; font-family:\'Space Mono\'">TICKET_USED</small>
+                      </div>';
+
+    // 2. JIKA SEDANG PROSES REFUND (PENAMBAHAN BARU)
+    } elseif ($orderStatus === 'refund_pending' || $refundStatus === 'pending') {
+        $badge = '<div class="badge-brutal" style="background:#ff9800; color:#000; border-color:#fff;">⏳ REFUND PENDING</div>';
+        $btnAction = '<div style="background:rgba(255,152,0,0.1); padding:10px; border:1px dashed #ff9800; text-align:center;">
+                        <small style="color:#ff9800; font-weight:800; font-family:\'Space Mono\'">UNDER_REVIEW</small>
+                      </div>';
+
+    // 3. JIKA REFUND SELESAI
+    } elseif ($refundStatus === 'refunded' || $orderStatus === 'refunded') {
+        $badge = '<div class="badge-brutal">💸 REFUNDED</div>';
+        $btnAction = '<small style="color:#444; font-weight:800; font-family:\'Space Mono\'">CLOSED</small>';
+
+    // 4. JIKA SUDAH BAYAR (BELUM CHECK-IN / BELUM REFUND)
+    } elseif ($orderStatus === 'paid') {
+        $badge = '<div class="badge-brutal status-paid">✅ CONFIRMED</div>';
+        $btnAction = '
+            <div style="display:flex; gap:10px;">
+                <button class="btn-brutal btn-ticket" onclick="viewTicket(\''.$ticketCode.'\')">VIEW_TICKET</button>
+                <button class="btn-brutal" style="border-color:#444; color:#666;" onclick="openRefund('.$o['id'].')">REFUND</button>
+            </div>';
+
+    // 5. JIKA BELUM BAYAR
+    } else {
+        $badge = '<div class="badge-brutal status-pending">⚠️ UNPAID</div>';
+        $btnAction = '
+            <div style="display:flex; gap:10px;">
+                <button class="btn-brutal btn-pay" onclick="openPay('.$o['id'].')">PAY_NOW</button>
+                <button class="btn-brutal" style="border-color:#ff4d4d; color:#ff4d4d" onclick="cancelOrder('.$o['id'].')">CANCEL</button>
+            </div>';
+    }
+?>
 
       <div class="ledger-item animate__animated animate__fadeInUp">
         <div class="l-cell l-index"><?= sprintf("%02d", $no++) ?></div>
@@ -337,6 +350,7 @@ function closePopup() {
 
 function openPay(id) {
     orderIdInput.value = id;
+    dynamicInputs.innerHTML = ''; // RESET INPUT SEBELUMNYA
     bankForm.action = '<?= base_url('user/transactions/pay/store') ?>';
     let html = `<p style="text-align:center; font-size:0.8rem; color:#888; margin-bottom:20px;">UPLOAD PAYMENT PROOF TO CONFIRM</p>`;
     let inputs = `
@@ -370,6 +384,7 @@ function viewTicket(code) {
 
 function openRefund(id) {
     orderIdInput.value = id;
+    dynamicInputs.innerHTML = ''; // RESET INPUT SEBELUMNYA
     bankForm.action = '<?= base_url('user/transactions/refund/store') ?>';
     dynamicInputs.innerHTML = `
         <textarea name="reason" rows="4" placeholder="PLEASE EXPLAIN THE REASON..." required minlength="10"></textarea>

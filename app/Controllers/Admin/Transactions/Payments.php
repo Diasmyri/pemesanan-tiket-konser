@@ -17,43 +17,44 @@ class Payments extends BaseController
         $this->orderModel   = new OrderModel();
     }
 
-    // ======================================================
-    // LIST PAYMENT
-    // ======================================================
     public function index()
-    {
-        $keyword = $this->request->getGet('keyword');
+{
+    helper('url'); // Tambahkan ini agar base_url() aktif
+    $keyword = $this->request->getGet('keyword');
 
-        $builder = $this->paymentModel
-            ->select('
-                payments.*,
-                orders.id AS order_id,
-                orders.status AS order_status,
-                users.username AS user_name,
-                events.title AS event_name
-            ')
-            ->join('orders', 'orders.id = payments.order_id', 'left')
-            ->join('users', 'users.id = orders.user_id', 'left')
-            ->join('events', 'events.id = orders.event_id', 'left')
-            ->orderBy('payments.id', 'DESC');
+    $builder = $this->paymentModel
+        ->select('
+            payments.*,
+            orders.id AS order_id,
+            orders.status AS order_status,
+            users.username AS user_name,
+            users.nama AS real_name, 
+            events.title AS event_name
+        ')
+        ->join('orders', 'orders.id = payments.order_id', 'left')
+        ->join('users', 'users.id = orders.user_id', 'left')
+        ->join('events', 'events.id = orders.event_id', 'left')
+        ->orderBy('payments.id', 'DESC');
 
-        if (!empty($keyword)) {
-            $builder->groupStart()
-                ->like('users.username', $keyword)
-                ->orLike('events.title', $keyword)
-                ->groupEnd();
-        }
-
-        $payments = $builder->paginate(10);
-
-        return view('admin/transactions/payments_index', [
-            'title'    => 'Payments',
-            'payments' => $payments,
-            'pager'    => $this->paymentModel->pager,
-            'keyword'  => $keyword
-        ]);
+    if (!empty($keyword)) {
+        $builder->groupStart()
+            ->like('users.username', $keyword)
+            ->orLike('users.nama', $keyword)
+            ->orLike('events.title', $keyword)
+            ->orLike('payments.method', $keyword)
+            ->groupEnd();
     }
 
+    $payments = $builder->paginate(10);
+
+    return view('admin/transactions/payments_index', [
+        'title'    => 'Payments',
+        'payments' => $payments,
+        'pager'    => $this->paymentModel->pager,
+        'keyword'  => $keyword ?? ''
+    ]);
+}   
+    
     // ======================================================
     // AJAX DETAIL ORDER
     // ======================================================
@@ -113,46 +114,53 @@ class Payments extends BaseController
     // SIMPAN PAYMENT BARU
     // ======================================================
     public function store()
-    {
-        $orderId = $this->request->getPost('order_id');
-        $order   = $this->orderModel->find($orderId);
+{
+    $orderId = $this->request->getPost('order_id');
+    $order   = $this->orderModel->find($orderId);
 
-        if (!$order) {
-            return redirect()->back()
-                ->with('error', 'Order tidak ditemukan');
-        }
-
-        // 🚫 CEK SUDAH PERNAH BAYAR
-        $exists = $this->paymentModel
-            ->where('order_id', $orderId)
-            ->first();
-
-        if ($exists) {
-            return redirect()->back()
-                ->with('error', 'Order ini sudah dibayar');
-        }
-
-        // ======================
-        // SIMPAN PAYMENT
-        // ======================
-        $paymentData = [
-            'order_id'     => $orderId,
-            'amount'       => $order['total_price'],
-            'method'       => $this->request->getPost('payment_method'),
-            'payment_date' => $this->request->getPost('payment_date'),
-            'created_at'   => date('Y-m-d H:i:s')
-        ];
-
-        $this->paymentModel->insert($paymentData);
-
-        // ======================
-        // UPDATE STATUS ORDER
-        // ======================
-        $this->orderModel->update($orderId, [
-            'status' => 'paid'
-        ]);
-
-        return redirect()->to('/admin/transactions/payments')
-            ->with('success', 'Pembayaran berhasil ditambahkan');
+    if (!$order) {
+        return redirect()->back()->with('error', 'Order tidak ditemukan');
     }
+
+    // 🚫 CEK SUDAH PERNAH BAYAR
+    $exists = $this->paymentModel->where('order_id', $orderId)->first();
+    if ($exists) {
+        return redirect()->back()->with('error', 'Order ini sudah dibayar');
+    }
+
+    // 📸 PROSES UPLOAD GAMBAR (Tambahkan Bagian Ini)
+    $fileProof = $this->request->getFile('payment_proof');
+    $fileName = null;
+
+    if ($fileProof && $fileProof->isValid() && !$fileProof->hasMoved()) {
+        // Menghasilkan nama unik (seperti 1766834281_55b1a30fe84e25c1e8c8.jpg)
+        $fileName = $fileProof->getRandomName();
+        // Memindahkan file ke folder public/uploads/payments/
+        $fileProof->move(FCPATH . 'uploads/payments', $fileName);
+    }
+
+    // ======================
+    // SIMPAN PAYMENT
+    // ======================
+    $paymentData = [
+        'order_id'     => $orderId,
+        'amount'       => $order['total_price'],
+        'method'       => $this->request->getPost('payment_method'),
+        'payment_proof'=> $fileName, // Simpan nama file ke DB
+        'payment_date' => $this->request->getPost('payment_date'),
+        'created_at'   => date('Y-m-d H:i:s')
+    ];
+
+    $this->paymentModel->insert($paymentData);
+
+    // ======================
+    // UPDATE STATUS ORDER
+    // ======================
+    $this->orderModel->update($orderId, [
+        'status' => 'paid'
+    ]);
+
+    return redirect()->to('/admin/transactions/payments')
+        ->with('success', 'Pembayaran berhasil ditambahkan dan file telah diupload');
+}
 }

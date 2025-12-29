@@ -25,11 +25,8 @@
             --transition: all 0.25s ease;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
-        /* ================= BODY ================= */
         body {
             font-family: 'Poppins', sans-serif;
             color: var(--text-main);
@@ -51,7 +48,6 @@
             pointer-events: none;
         }
 
-        /* GLOBAL OVERLAY (LEMBUT BIAR VIDEO KELIATAN) */
         body::after {
             content: "";
             position: fixed;
@@ -100,13 +96,7 @@
             transition: var(--transition);
         }
 
-        .section-title:hover {
-            color: var(--accent);
-        }
-
-        .section-title i {
-            transition: var(--transition);
-        }
+        .section-title:hover { color: var(--accent); }
 
         .submenu {
             display: none;
@@ -115,9 +105,7 @@
             list-style: none;
         }
 
-        .submenu.open {
-            display: block;
-        }
+        .submenu.open { display: block; }
 
         .sidebar a {
             display: flex;
@@ -150,7 +138,6 @@
             min-height: 100vh;
         }
 
-        /* ================= HEADER ================= */
         .dashboard-header {
             display: flex;
             align-items: center;
@@ -169,15 +156,8 @@
             box-shadow: var(--shadow);
         }
 
-        .dash-text h1 {
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .dash-text p {
-            margin: 4px 0 0;
-            color: var(--text-muted);
-        }
+        .dash-text h1 { margin: 0; font-weight: 700; }
+        .dash-text p { margin: 4px 0 0; color: var(--text-muted); }
 
         /* ================= CARD ================= */
         .card-box {
@@ -194,29 +174,9 @@
             transition: var(--transition);
         }
 
-        .card-box::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.08),
-                transparent
-            );
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
         .card-box:hover {
             transform: translateY(-6px);
-            box-shadow:
-                0 0 0 1px rgba(255, 213, 79, 0.18),
-                0 28px 80px rgba(0, 0, 0, 0.75);
-        }
-
-        .card-box:hover::after {
-            opacity: 1;
+            box-shadow: 0 0 0 1px rgba(255, 213, 79, 0.18), 0 28px 80px rgba(0, 0, 0, 0.75);
         }
 
         .card-title {
@@ -228,16 +188,13 @@
             letter-spacing: 0.3px;
         }
 
-        .card-value {
-            font-size: 34px;
-            font-weight: 700;
-        }
+        .card-value { font-size: 34px; font-weight: 700; }
 
         /* ================= STATS ================= */
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 26px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
             margin-top: 40px;
         }
 
@@ -266,14 +223,7 @@
             vertical-align: middle;
         }
 
-        .table tbody tr {
-            transition: background 0.25s ease, transform 0.25s ease;
-        }
-
-        .table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: scale(1.01);
-        }
+        .table tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
 
         /* ================= BADGE ================= */
         .badge {
@@ -281,97 +231,36 @@
             font-size: 10px;
             border-radius: 999px;
             font-weight: 700;
-            letter-spacing: 0.6px;
             text-transform: uppercase;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
         }
+        .badge-success { background: #1f8f55; }
+        .badge-warning { background: #c98a10; }
+        .badge-info { background: #1e6091; }
+        .badge-danger { background: #b02a37; } 
 
-        .badge-success {
-            background: #1f8f55;
-        }
-
-        .badge-warning {
-            background: #c98a10;
-            animation: pulse 2s infinite;
-        }
-
-        .badge-danger {
-            background: #b33a3a;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 0 rgba(201, 138, 16, 0.0);
-            }
-            50% {
-                box-shadow: 0 0 18px rgba(201, 138, 16, 0.55);
-            }
-        }
-
-        /* ================= CHART ================= */
-        canvas {
-            height: 280px !important;
-        }
-
-        /* ================= RESPONSIVE ================= */
-        @media (max-width: 1200px) {
-            .sidebar {
-                width: 220px;
-            }
-            .content {
-                margin-left: 220px;
-                padding: 40px 32px;
-            }
-        }
+        canvas { height: 280px !important; }
 
         @media (max-width: 768px) {
-            .bg-video {
-                display: none;
-            }
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                padding: 20px;
-            }
-            .content {
-                margin-left: 0;
-                padding: 32px 22px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .card-box {
-                padding: 22px;
-            }
-            .card-value {
-                font-size: 26px;
-            }
-            canvas {
-                height: 200px !important;
-            }
+            .bg-video { display: none; }
+            .sidebar { position: relative; width: 100%; height: auto; padding: 20px; }
+            .content { margin-left: 0; padding: 32px 22px; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- BACKGROUND VIDEO -->
-<video autoplay muted loop playsinline class="bg-video"
-poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format&fit=crop&w=2400&q=80">
+<video autoplay muted loop playsinline class="bg-video">
     <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
 </video>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="brand">Admin Panel - Ticketing</div>
 
     <div class="section-title">MAIN</div>
     <a href="/admin/dashboard" class="active"><i class="fas fa-gauge"></i> Dashboard</a>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        MASTERS <i class="fas fa-chevron-down"></i>
-    </div>
+    <div class="section-title" onclick="toggleSubmenu(this)">MASTERS <i class="fas fa-chevron-down"></i></div>
     <ul class="submenu">
         <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
         <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
@@ -380,42 +269,41 @@ poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format
         <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
     </ul>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        TRANSAKSI <i class="fas fa-chevron-down"></i>
-    </div>
+    <div class="section-title" onclick="toggleSubmenu(this)">TRANSAKSI <i class="fas fa-chevron-down"></i></div>
     <ul class="submenu">
         <li><a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a></li>
         <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
         <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
+        <li><a href="/admin/transactions/refunds"><i class="fas fa-rotate-left"></i> Refunds</a></li>
     </ul>
 
-    <div class="section-title" onclick="toggleSubmenu(this)">
-        LAPORAN <i class="fas fa-chevron-down"></i>
-    </div>
+    <div class="section-title" onclick="toggleSubmenu(this)">LAPORAN <i class="fas fa-chevron-down"></i></div>
     <ul class="submenu">
-        <li><a href="/admin/reports/daily"><i class="fas fa-clock"></i> Harian</a></li>
-        <li><a href="/admin/reports/monthly"><i class="fas fa-calendar"></i> Bulanan</a></li>
+        <li><a href="/admin/laporan/harian"><i class="fas fa-file-invoice-dollar"></i> Laporan Harian</a></li>
+        <li><a href="/admin/laporan/bulanan"><i class="fas fa-chart-line"></i> Laporan Bulanan</a></li>
     </ul>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
-
     <div class="dashboard-header">
-        <div class="dash-icon">
-            <i class="fas fa-chart-pie"></i>
-        </div>
+        <div class="dash-icon"><i class="fas fa-chart-pie"></i></div>
         <div class="dash-text">
             <h1>Dashboard</h1>
             <p>Ringkasan aktivitas dan statistik sistem ticketing.</p>
         </div>
     </div>
 
-    <!-- STATS -->
     <div class="stats-row">
         <div class="card-box">
             <div class="card-title">🎟️ Tiket Terjual</div>
             <div class="card-value"><?= number_format($totalTicketsSold) ?></div>
+        </div>
+        <div class="card-box">
+            <div class="card-title">🏃 Check-In</div>
+            <div class="card-value"><?= number_format($totalCheckIn) ?></div>
+            <div style="font-size: 11px; color: var(--accent); margin-top: 5px; font-weight: 600;">
+                <?= ($totalTicketsSold > 0) ? round(($totalCheckIn / $totalTicketsSold) * 100, 1) : 0 ?>% dari Tiket Terjual
+            </div>
         </div>
         <div class="card-box">
             <div class="card-title">📅 Total Event</div>
@@ -427,138 +315,179 @@ poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?auto=format
         </div>
         <div class="card-box">
             <div class="card-title">💰 Revenue</div>
-            <div class="card-value">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></div>
+            <div class="card-value" style="font-size: 24px; margin-top: 10px;">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></div>
         </div>
     </div>
 
-    <!-- TABLES -->
-    <div class="row g-4">
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="card-box">
+                <div class="card-title"><i class="fas fa-calendar-alt me-2 text-warning"></i> Daftar Keseluruhan Event</div>
+                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nama Event</th>
+                                <th>Tanggal Pelaksanaan</th>
+                                <th>Venue</th>
+                                <th class="text-center">Status Jadwal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($allEvents)): foreach ($allEvents as $e): 
+                                $isExpired = strtotime($e['date']) < strtotime(date('Y-m-d'));
+                                $statusLabel = $isExpired ? 'Expired' : 'Active';
+                                $statusBadge = $isExpired ? 'badge-danger' : 'badge-success';
+                            ?>
+                                <tr>
+                                    <td><strong><?= $e['title'] ?></strong></td>
+                                    <td><i class="far fa-calendar-check me-1"></i> <?= date('d M Y', strtotime($e['date'])) ?></td>
+                                    <td>
+                                        <i class="fas fa-location-dot me-1 text-muted"></i> 
+                                        <?= $e['venue_name'] ?? '<span class="text-muted italic">Tidak ada venue</span>' ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge <?= $statusBadge ?>"><?= $statusLabel ?></span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; else: ?>
+                                <tr><td colspan="4" class="text-center text-muted">Tidak ada data event.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-md-6">
+            <div class="card-box">
+                <div class="card-title"><i class="fas fa-ticket-alt me-2 text-primary"></i> Rincian Tiket Terjual per Event</div>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Nama Event</th>
+                                <th>Tipe Tiket</th>
+                                <th class="text-center">Terjual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($soldDetails)): foreach ($soldDetails as $sd): ?>
+                                <tr>
+                                    <td><strong><?= $sd['event_name'] ?></strong></td>
+                                    <td><span class="badge badge-info"><?= $sd['ticket_name'] ?></span></td>
+                                    <td class="text-center"><span class="h6 fw-bold text-accent"><?= number_format($sd['total_sold']) ?></span></td>
+                                </tr>
+                            <?php endforeach; else: ?>
+                                <tr><td colspan="3" class="text-center text-muted">Belum ada tiket terjual.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-box">
+                <div class="card-title"><i class="fas fa-user-check me-2 text-success"></i> Rincian Kedatangan per Event</div>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Nama Event</th>
+                                <th>Tipe Tiket</th>
+                                <th class="text-center">Check-In</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($checkinDetails)): foreach ($checkinDetails as $cd): ?>
+                                <tr>
+                                    <td><strong><?= $cd['event_name'] ?></strong></td>
+                                    <td><span class="badge badge-info"><?= $cd['ticket_name'] ?></span></td>
+                                    <td class="text-center"><span class="h6 fw-bold text-accent"><?= number_format($cd['total']) ?></span></td>
+                                </tr>
+                            <?php endforeach; else: ?>
+                                <tr><td colspan="3" class="text-center text-muted">Belum ada data check-in.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
         <div class="col-md-7">
             <div class="card-box">
                 <div class="card-title">Order Terbaru</div>
-
-                <table class="table table-light table-hover table-sm">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Event</th>
-                            <th>Qty</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($recentOrders)): foreach ($recentOrders as $o): ?>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
                             <tr>
-                                <td><?= $o['id'] ?></td>
-                                <td><?= $o['user_name'] ?></td>
-                                <td><?= $o['event_name'] ?></td>
-                                <td><?= $o['qty'] ?></td>
-                                <td>Rp <?= number_format($o['total_price'], 0, ',', '.') ?></td>
-                                <td>
-                                    <?php
-                                    $s = strtolower($o['status']);
-                                    $badge = match ($s) {
-                                        'paid' => 'badge-success',
-                                        'pending' => 'badge-warning',
-                                        'failed' => 'badge-danger',
-                                        default => 'bg-secondary'
-                                    };
-                                    ?>
-                                    <span class="badge <?= $badge ?>"><?= $s ?></span>
-                                </td>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Event</th>
+                                <th>Total</th>
+                                <th>Status</th>
                             </tr>
-                        <?php endforeach; else: ?>
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">Belum ada order.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="col-md-5">
-            <div class="card-box">
-                <div class="card-title">Event Terdekat</div>
-
-                <table class="table table-light table-hover table-sm">
-                    <thead>
-                        <tr>
-                            <th>Event</th>
-                            <th>Tanggal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($upcomingEvents)): foreach ($upcomingEvents as $e): ?>
-                            <tr>
-                                <td><?= $e['title'] ?></td>
-                                <td><?= date('d M Y', strtotime($e['date'])) ?></td>
-                            </tr>
-                        <?php endforeach; else: ?>
-                            <tr>
-                                <td colspan="2" class="text-center text-muted">Tidak ada event.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- CHART -->
-    <div class="row g-4 mt-4">
-        <div class="col-md-7">
-            <div class="card-box">
-                <div class="card-title">Penjualan 7 Hari</div>
-                <canvas id="salesChart"></canvas>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($recentOrders)): foreach ($recentOrders as $o): 
+                                $s = strtolower($o['status']);
+                                if(in_array($s, ['failed', 'expired'])) continue;
+                                $badge = match ($s) { 'paid' => 'badge-success', 'pending' => 'badge-warning', 'refunded' => 'badge-info', default => 'bg-secondary' };
+                                ?>
+                                <tr>
+                                    <td><?= $o['id'] ?></td>
+                                    <td><?= $o['user_name'] ?></td>
+                                    <td><small><?= $o['event_name'] ?></small></td>
+                                    <td>Rp <?= number_format($o['total_price'], 0, ',', '.') ?></td>
+                                    <td><span class="badge <?= $badge ?>"><?= $s ?></span></td>
+                                </tr>
+                            <?php endforeach; else: ?>
+                                <tr><td colspan="5" class="text-center text-muted">Belum ada order.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="col-md-5">
             <div class="card-box">
-                <div class="card-title">Status Pembayaran</div>
+                <div class="card-title">Status Pembayaran (%)</div>
                 <canvas id="paymentChart"></canvas>
             </div>
         </div>
     </div>
 
+    <div class="row g-4 mt-1">
+        <div class="col-12">
+            <div class="card-box">
+                <div class="card-title">Penjualan 7 Hari Terakhir</div>
+                <canvas id="salesChart" style="height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
 function toggleSubmenu(element) {
     const submenu = element.nextElementSibling;
     const icon = element.querySelector('i');
-    
-    if (submenu.classList.contains('open')) {
-        submenu.classList.remove('open');
-        icon.style.transform = 'rotate(0deg)';
-    } else {
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
+    submenu.classList.toggle('open');
+    if (submenu.classList.contains('open')) icon.style.transform = 'rotate(180deg)';
+    else icon.style.transform = 'rotate(0deg)';
 }
 
-// Auto-open submenu jika halaman aktif ada di dalamnya
-document.addEventListener('DOMContentLoaded', function() {
-    const activeLink = document.querySelector('.submenu a.active');
-    if (activeLink) {
-        const submenu = activeLink.closest('.submenu');
-        const sectionTitle = submenu.previousElementSibling;
-        const icon = sectionTitle.querySelector('i');
-        submenu.classList.add('open');
-        icon.style.transform = 'rotate(180deg)';
-    }
-});
-</script>
-
-<script>
+// Chart Sales
 new Chart(document.getElementById("salesChart"), {
     type: "line",
     data: {
-        labels: <?= json_encode(array_column($sales7days,'day')) ?>,
+        labels: <?= json_encode(array_column($sales7days ?? [], 'day')) ?>,
         datasets: [{
-            data: <?= json_encode(array_column($sales7days,'total')) ?>,
+            label: 'Total Penjualan',
+            data: <?= json_encode(array_column($sales7days ?? [], 'total')) ?>,
             borderColor: "#007bff",
             backgroundColor: "rgba(0,123,255,.18)",
             fill: true,
@@ -567,24 +496,40 @@ new Chart(document.getElementById("salesChart"), {
     },
     options: {
         plugins:{ legend:{ display:false } },
-        maintainAspectRatio:false
+        maintainAspectRatio:false,
+        scales: {
+            y: { ticks: { color: '#9aa5c3' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            x: { ticks: { color: '#9aa5c3' }, grid: { display: false } }
+        }
     }
 });
 
+// Chart Payment Status
+<?php 
+$filteredPayments = array_filter($paymentStatus ?? [], function($item) {
+    return in_array(strtolower($item['status']), ['paid', 'pending', 'refunded']);
+});
+?>
 new Chart(document.getElementById("paymentChart"), {
     type: "doughnut",
     data: {
-        labels: <?= json_encode(array_column($paymentStatus,'status')) ?>,
+        labels: <?= json_encode(array_values(array_column($filteredPayments,'status'))) ?>,
         datasets: [{
-            data: <?= json_encode(array_column($paymentStatus,'total')) ?>,
-            backgroundColor: ["#28a745","#ffc107","#dc3545","#6c757d"]
+            data: <?= json_encode(array_values(array_column($filteredPayments,'total'))) ?>,
+            backgroundColor: ["#1f8f55","#c98a10","#1e6091"],
+            borderWidth: 0
         }]
     },
     options: {
-        maintainAspectRatio:false
+        maintainAspectRatio:false,
+        plugins: {
+            legend: { 
+                position: 'bottom', 
+                labels: { color: '#ffffff', font: { weight: 'bold', size: 11 } } 
+            }
+        }
     }
 });
 </script>
-
 </body>
 </html>

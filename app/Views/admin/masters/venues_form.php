@@ -194,6 +194,10 @@ label {
 
     <div class="section-title">TRANSAKSI</div>
     <a href="/admin/transactions/orders"><i class="fas fa-receipt"></i> Orders</a>
+    <a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a>
+    <a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a>
+    <a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a>
+
 </div>
 
 <!-- CONTENT -->

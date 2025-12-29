@@ -60,7 +60,6 @@ class Events extends BaseController
             $newStart      = strtotime($date . ' ' . $startTime);
             $newEnd        = strtotime($date . ' ' . $endTime);
 
-            // Check if time overlaps
             if ($newStart < $existingEnd && $newEnd > $existingStart) {
                 return false;
             }
@@ -69,19 +68,30 @@ class Events extends BaseController
         return true;
     }
 
-    /* ================= INDEX ================= */
+    /* ================= INDEX (SEARCH ADJUSTED) ================= */
     public function index()
     {
         $keyword = $this->request->getGet('keyword');
 
-        $query = $this->event->select('events.*, venues.name AS venue_name')
-                             ->join('venues', 'venues.id = events.venue_id', 'left');
+        // Query Utama: Join ke Venue dan Join ke Artist (lewat tabel pivot) untuk searching
+        $builder = $this->event->select('events.*, venues.name AS venue_name')
+                               ->join('venues', 'venues.id = events.venue_id', 'left');
 
         if ($keyword) {
-            $query->like('events.title', $keyword);
+            // Join tambahan khusus filter pencarian Artist
+            $builder->join('events_artists', 'events_artists.event_id = events.id', 'left')
+                    ->join('artis', 'artis.id = events_artists.artist_id', 'left')
+                    ->groupStart()
+                        ->like('events.title', $keyword)         // Cari Judul
+                        ->orLike('artis.name', $keyword)         // Cari Artist
+                        ->orLike('venues.name', $keyword)        // Cari Venue
+                        ->orLike('events.date', $keyword)         // Cari Tanggal
+                        ->orLike('events.start_time', $keyword)   // Cari Jam
+                    ->groupEnd()
+                    ->groupBy('events.id'); // Supaya tidak duplikat record saat 1 event punya banyak artist
         }
 
-        $events = $query->paginate(10);
+        $events = $builder->paginate(10, 'default');
 
         foreach ($events as &$event) {
             $artists = $this->db->table('events_artists ea')
@@ -126,17 +136,14 @@ class Events extends BaseController
         $endTime   = $this->request->getPost('end_time');
         $venueId   = $this->request->getPost('venue_id');
 
-        // Validasi tanggal tidak boleh hari ini/kemarin
         if (!$this->isDateValid($date)) {
             return redirect()->back()->withInput()->with('error', 'Tanggal event tidak boleh hari ini atau kemarin.');
         }
 
-        // Validasi masa lalu
         if (strtotime($date . ' ' . $startTime) < time()) {
             return redirect()->back()->withInput()->with('error', 'Tanggal dan jam event tidak boleh di masa lalu.');
         }
 
-        // Validasi venue
         if (!$this->isVenueAvailable($venueId, $date, $startTime, $endTime)) {
             return redirect()->back()->withInput()->with('error', 'Venue sudah terpakai pada tanggal dan jam tersebut.');
         }
@@ -166,8 +173,7 @@ class Events extends BaseController
             ]);
         }
 
-        return redirect()->to('/admin/masters/events')
-                         ->with('success', 'Event berhasil ditambahkan.');
+        return redirect()->to('/admin/masters/events')->with('success', 'Event berhasil ditambahkan.');
     }
 
     /* ================= EDIT ================= */
@@ -211,17 +217,14 @@ class Events extends BaseController
         $endTime   = $this->request->getPost('end_time');
         $venueId   = $this->request->getPost('venue_id');
 
-        // Validasi tanggal tidak boleh hari ini/kemarin
         if (!$this->isDateValid($date)) {
             return redirect()->back()->withInput()->with('error', 'Tanggal event tidak boleh hari ini atau kemarin.');
         }
 
-        // Validasi masa lalu
         if (strtotime($date . ' ' . $startTime) < time()) {
             return redirect()->back()->withInput()->with('error', 'Tanggal dan jam event tidak boleh di masa lalu.');
         }
 
-        // Validasi venue
         if (!$this->isVenueAvailable($venueId, $date, $startTime, $endTime, $id)) {
             return redirect()->back()->withInput()->with('error', 'Venue sudah terpakai pada tanggal dan jam tersebut.');
         }
@@ -246,7 +249,6 @@ class Events extends BaseController
             'poster'     => $posterName
         ]);
 
-        // Sync artists
         $artistIds = $this->request->getPost('artist_ids') ?? [];
         $this->eventArtist->where('event_id', $id)->delete();
         foreach ($artistIds as $artistId) {
@@ -256,8 +258,7 @@ class Events extends BaseController
             ]);
         }
 
-        return redirect()->to('/admin/masters/events')
-                         ->with('success', 'Event berhasil diperbarui.');
+        return redirect()->to('/admin/masters/events')->with('success', 'Event berhasil diperbarui.');
     }
 
     /* ================= DELETE ================= */
@@ -266,19 +267,15 @@ class Events extends BaseController
         $event = $this->event->find($id);
 
         if (!$event) {
-            return redirect()->to('/admin/masters/events')
-                             ->with('error', 'Event tidak ditemukan.');
+            return redirect()->to('/admin/masters/events')->with('error', 'Event tidak ditemukan.');
         }
 
-        // Hapus poster jika ada
         if ($event['poster'] && file_exists('uploads/events/' . $event['poster'])) {
             unlink('uploads/events/' . $event['poster']);
         }
 
-        // Hapus event & relasi artist otomatis (ON DELETE CASCADE)
         $this->event->delete($id);
 
-        return redirect()->to('/admin/masters/events')
-                         ->with('success', 'Event berhasil dihapus.');
+        return redirect()->to('/admin/masters/events')->with('success', 'Event berhasil dihapus.');
     }
 }

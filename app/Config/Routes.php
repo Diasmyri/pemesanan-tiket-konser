@@ -2,6 +2,10 @@
 
 use CodeIgniter\Router\RouteCollection;
 
+/**
+ * @var RouteCollection $routes
+ */
+
 /*
 |--------------------------------------------------------------------------
 | DEFAULT ROUTE
@@ -34,7 +38,6 @@ $routes->group('admin', function ($routes) {
     // MASTERS
     // =======================
     $routes->group('masters', function ($routes) {
-
         // Artists
         $routes->get('artists', 'Admin\Masters\Artists::index');
         $routes->get('artists/create', 'Admin\Masters\Artists::create');
@@ -75,7 +78,6 @@ $routes->group('admin', function ($routes) {
     // TRANSACTIONS (ADMIN)
     // =======================
     $routes->group('transactions', ['namespace' => 'App\Controllers\Admin\Transactions'], function ($routes) {
-
         $routes->get('orders', 'Orders::index');
         $routes->get('orders/ticket-types/(:num)', 'Orders::getTicketTypes/$1');
 
@@ -86,7 +88,7 @@ $routes->group('admin', function ($routes) {
         $routes->get('checkin', 'Checkin::index');
         $routes->get('checkin/create', 'Checkin::create');
         $routes->post('checkin/store', 'Checkin::store');
-        $routes->post('checkin/process', 'Checkin::process');
+        $routes->get('checkin/process/(:num)', 'Checkin::process/$1');
 
         $routes->get('refunds', 'Refunds::index');
         $routes->get('refunds/approve/(:num)', 'Refunds::approve/$1');
@@ -95,16 +97,16 @@ $routes->group('admin', function ($routes) {
     });
 
     // =======================
-    // REPORTS
+    // REPORTS (LAPORAN)
     // =======================
-    $routes->group('reports', ['namespace' => 'App\Controllers\Admin\Reports'], function ($routes) {
-        $routes->get('daily', 'Daily::index');
-        $routes->get('monthly', 'Monthly::index');
-        $routes->get('daily/export/pdf', 'Daily::exportPDF');
-        $routes->get('daily/export/excel', 'Daily::exportExcel');
-        $routes->get('monthly/export/pdf', 'Monthly::exportPDF');
-        $routes->get('monthly/export/excel', 'Monthly::exportExcel');
+    $routes->group('laporan', ['namespace' => 'App\Controllers\Admin\Laporan'], function ($routes) {
+        // Laporan Harian
+        $routes->get('harian', 'Harian::index');
+        
+        // Laporan Bulanan
+        $routes->get('bulanan', 'Bulanan::index');
     });
+
 });
 
 /*
@@ -114,10 +116,8 @@ $routes->group('admin', function ($routes) {
 */
 $routes->group('user', function ($routes) {
 
-    // Landing
+    // Landing & Auth
     $routes->get('/', 'User\Auth::homeLogin');
-
-    // Auth
     $routes->get('login', 'User\Auth::loginForm');
     $routes->post('login', 'User\Auth::loginProcess');
     $routes->get('register', 'User\Auth::registerForm');
@@ -125,6 +125,7 @@ $routes->group('user', function ($routes) {
     $routes->get('forgot-password', 'User\Auth::forgotForm');
     $routes->post('forgot-password', 'User\Auth::forgotProcess');
     $routes->get('auth/artists/(:num)', 'User\Auth::artists/$1');
+
     // Home
     $routes->get('home', 'User\Home::index');
 
@@ -133,8 +134,6 @@ $routes->group('user', function ($routes) {
     $routes->get('event/getArtists/(:num)', 'User\Event::getArtists/$1');
     $routes->get('event/getTicketTypes/(:num)', 'User\Event::getTicketTypes/$1');
     $routes->post('event/buyTicket', 'User\Event::buyTicket');
-
-    // 🔥 ROUTE BARU (INI YANG BIKIN TIDAK 404)
     $routes->get('event/artists/(:num)', 'User\Event::artists/$1');
 
     // Orders
@@ -149,10 +148,9 @@ $routes->group('user', function ($routes) {
     $routes->delete('transactions/cancel/(:num)', 'User\Transactions::cancelOrder/$1');
     $routes->get('transactions/qr/(:any)', 'User\Transactions::qr/$1');
 
-// Profile
-$routes->get('profile', 'User\Profile::index');
-$routes->post('profile/update', 'User\Profile::update');
-
+    // Profile
+    $routes->get('profile', 'User\Profile::index');
+    $routes->post('profile/update', 'User\Profile::update');
 
     // Logout
     $routes->get('logout', 'User\Auth::logout');

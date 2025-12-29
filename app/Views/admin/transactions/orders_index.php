@@ -1,208 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Orders - Admin Panel</title>
+<meta charset="UTF-8">
+<title>Orders - Admin Panel</title>
 
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #0d0f1a;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+/* Mempertahankan semua style asli yang lo kirim */
+:root {
+    --bg-main: #0e1117;
+    --bg-sidebar: #111423;
+    --primary: #1f2a44;
+    --accent: #ffd54f;
+    --text-main: #ffffff;
+    --text-muted: #a1a6b3;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --hover-bg: rgba(255, 255, 255, 0.08);
+    --shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+    --transition: all 0.35s ease;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-main); overflow-x: hidden; }
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            background: #0f1120;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            padding: 22px;
-        }
+/* Background Video Setup */
+.bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; filter: brightness(0.65) saturate(0.9) blur(1.2px); pointer-events: none; }
+body::after { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%), linear-gradient(rgba(10, 12, 20, 0.78), rgba(10, 12, 20, 0.85)); z-index: -2; pointer-events: none; }
 
-        .brand {
-            font-size: 18px;
-            font-weight: 600;
-            color: #ffd54f;
-            margin-bottom: 25px;
-        }
+/* Sidebar & Nav Styles */
+.sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: linear-gradient(180deg, #111423, #0d101a); border-right: 1px solid var(--border-color); padding: 32px 24px; z-index: 1000; overflow-y: auto; }
+.brand { font-size: 22px; font-weight: 700; color: var(--accent); text-align: center; margin-bottom: 42px; letter-spacing: 0.5px; }
+.section-title { font-size: 11px; color: var(--text-muted); margin: 30px 0 12px; letter-spacing: 1.6px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 8px 0; transition: var(--transition); }
+.section-title:hover { color: var(--accent); }
+.submenu { display: none; margin-left: 16px; padding-left: 0; list-style: none; }
+.submenu.open { display: block; }
+.sidebar a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; font-size: 14px; color: var(--text-main); text-decoration: none; border-radius: 12px; transition: var(--transition); }
+.sidebar a:hover { background: var(--hover-bg); transform: translateX(6px); }
+.sidebar a.active { background: linear-gradient(135deg, #1f2a44, #2b3760); font-weight: 600; box-shadow: var(--shadow); }
 
-        .section-title {
-            font-size: 11px;
-            letter-spacing: 1px;
-            color: #777;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
+/* Content & Tables */
+.content { margin-left: 260px; padding: 50px 60px; position: relative; z-index: 5; }
+.page-title { font-size: 38px; font-weight: 700; display: flex; align-items: center; gap: 14px; text-shadow: 0 10px 40px rgba(0, 0, 0, 0.65); margin-bottom: 10px; }
+.small-muted { color: var(--text-muted); margin-bottom: 36px; opacity: 0.85; font-size: 14px; }
+.card-box { position: relative; background: linear-gradient(160deg, rgba(26, 31, 46, 0.88), rgba(20, 24, 38, 0.88)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 22px; padding: 30px; box-shadow: var(--shadow); transition: var(--transition); }
+.table { background: transparent !important; color: #fff; margin-bottom: 0; }
+.table thead th { background: rgba(255, 255, 255, 0.06); font-size: 11px; text-transform: uppercase; color: var(--text-muted); padding: 14px; border-bottom: 1px solid var(--border-color); }
+.table tbody td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 14px; }
+.search-box { background: rgba(17, 24, 41, 0.85); border: 1px solid var(--border-color); color: #fff; padding: 12px 16px; border-radius: 12px; width: 300px; font-size: 14px; transition: var(--transition); }
 
-        .sidebar a {
-            display: block;
-            padding: 10px 12px;
-            font-size: 14px;
-            text-decoration: none;
-            color: #c8cbe4;
-            border-radius: 6px;
-            transition: 0.2s;
-        }
-
-        .sidebar a:hover {
-            background: rgba(255,255,255,0.07);
-            color: #fff;
-        }
-
-        .sidebar a.active {
-            background: #12244a;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 45px;
-        }
-
-        .page-title {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .card-box {
-            background: #131728;
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 25px;
-            border-radius: 14px;
-            margin-top: 20px;
-        }
-
-        table {
-            color: #cfd6f3 !important;
-        }
-
-        thead {
-            background: #1b2345 !important;
-        }
-
-        .search-box {
-            background: #1b2345;
-            border: 1px solid rgba(255,255,255,0.12);
-            color: #fff;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-
-        .pending { background: #ffca28; color: #000; }
-        .paid { background: #4caf50; }
-        .cancelled { background: #e53935; }
-    </style>
+/* Status Badges Custom */
+.status-badge { padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; text-transform: capitalize; }
+.pending { background: rgba(255, 213, 79, 0.2); color: #ffd54f; }
+.paid { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+.cancelled { background: rgba(255, 90, 90, 0.2); color: #ff6b6b; }
+.refunded { background: rgba(161, 166, 179, 0.2); color: #a1a6b3; }
+</style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
+<video autoplay muted loop playsinline class="bg-video">
+    <source src="https://cdn.coverr.co/videos/coverr-concert-crowd-light-show-1596/1080p.mp4" type="video/mp4">
+</video>
+
 <div class="sidebar">
     <div class="brand">Admin Panel - Ticketing</div>
 
     <div class="section-title">MAIN</div>
     <a href="/admin/dashboard"><i class="fas fa-gauge"></i> Dashboard</a>
 
-    <div class="section-title">MASTERS</div>
-    <a href="/admin/masters/artists"><i class="fas fa-user"></i> Artists</a>
-    <a href="/admin/masters/events"><i class="fas fa-calendar-days"></i> Events</a>
-    <a href="/admin/masters/venues"><i class="fas fa-map-location-dot"></i> Venues</a>
-    <a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a>
-    <a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a>
+    <div class="section-title" onclick="toggleSubmenu(this)">
+        MASTERS <i class="fas fa-chevron-down"></i>
+    </div>
+    <ul class="submenu">
+        <li><a href="/admin/masters/artists"><i class="fas fa-microphone"></i> Artists</a></li>
+        <li><a href="/admin/masters/events"><i class="fas fa-calendar"></i> Events</a></li>
+        <li><a href="/admin/masters/venues"><i class="fas fa-location-dot"></i> Venues</a></li>
+        <li><a href="/admin/masters/tickettypes"><i class="fas fa-ticket"></i> Ticket Types</a></li>
+        <li><a href="/admin/masters/users"><i class="fas fa-users"></i> Users</a></li>
+    </ul>
 
-    <div class="section-title">TRANSAKSI</div>
-    <a href="/admin/transactions/orders" class="active"><i class="fas fa-receipt"></i> Orders</a>
-    <a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a>
-    <a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a>
+    <div class="section-title" onclick="toggleSubmenu(this)">
+        TRANSAKSI <i class="fas fa-chevron-down"></i>
+    </div>
+    <ul class="submenu">
+        <li><a href="/admin/transactions/orders" class="active"><i class="fas fa-receipt"></i> Orders</a></li>
+        <li><a href="/admin/transactions/payments"><i class="fas fa-credit-card"></i> Payments</a></li>
+        <li><a href="/admin/transactions/checkin"><i class="fas fa-qrcode"></i> Check-in</a></li>
+        <li><a href="/admin/transactions/refunds"><i class="fas fa-plus"></i> Ajukan Refund</a></li>
+    </ul>
 
-    <div class="section-title">LAPORAN</div>
-    <a href="/admin/reports/daily"><i class="fas fa-clock"></i> Harian</a>
-    <a href="/admin/reports/monthly"><i class="fas fa-calendar"></i> Bulanan</a>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
-    <div class="page-title">🧾 Orders</div>
-    <p style="color:#9aa4c7;">Kelola pemesanan tiket.</p>
+    <div class="page-title">
+        <i class="fas fa-receipt"></i> Orders
+    </div>
+    <p class="small-muted">Riwayat transaksi pemesanan tiket masuk.</p>
 
     <div class="card-box">
-
-        <?php if(session()->getFlashdata('success')): ?>
+        <?php if (session()->getFlashdata('success')) : ?>
             <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
         <?php endif; ?>
 
-        <div class="d-flex justify-content-end mb-3">
+        <div class="top-actions" style="justify-content: flex-end;">
             <form method="get">
-                <input type="text" name="keyword" class="form-control search-box"
-                       placeholder="Search order..." value="<?= $keyword ?? '' ?>"
-                       style="width: 240px;">
+                <input type="text" class="search-box" name="keyword"
+                       placeholder="Cari Tanggal, User, Event, Harga, Status..." value="<?= esc($keyword ?? '') ?>">
             </form>
         </div>
 
-        <table class="table table-bordered table-dark table-hover mt-3">
-            <thead>
-            <tr>
-                <th width="50">#</th>
-                <th>User</th>
-                <th>Event</th>
-                <th>Ticket Type</th>
-                <th>Qty</th>
-                <th>Total</th>
-                <th>Status</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <?php if(empty($orders)): ?>
-                <tr>
-                    <td colspan="7" class="text-center text-secondary py-3">Tidak ada data.</td>
-                </tr>
-            <?php else: ?>
-                <?php $no = 1; foreach ($orders as $o): ?>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th width="50">#</th>
+                        <th>Tanggal Order</th>
+                        <th>User</th>
+                        <th>Event / Tiket</th>
+                        <th class="text-center">Qty</th>
+                        <th>Total Harga</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if (empty($orders)) : ?>
+                    <tr>
+                        <td colspan="7" class="text-center text-secondary">Tidak ada data order.</td>
+                    </tr>
+                <?php else : ?>
+                    <?php $no = 1 + ($page - 1) * $perPage; ?>
+                    <?php foreach ($orders as $o) : ?>
                     <tr>
                         <td><?= $no++ ?></td>
-                        <td><?= $o['username'] ?></td>
-                        <td><?= $o['event_name'] ?></td>
-                        <td><?= $o['ticket_type_name'] ?></td>
-                        <td><?= $o['qty'] ?></td>
-                        <td>Rp <?= number_format($o['total_price'], 0, ',', '.') ?></td>
+                        <td>
+                            <span class="text-white"><?= date('d M Y', strtotime($o['created_at'])) ?></span><br>
+                            <small class="text-muted"><?= date('H:i', strtotime($o['created_at'])) ?> WIB</small>
+                        </td>
+                        <td>
+                            <span class="fw-bold"><?= esc($o['username']) ?></span><br>
+                            <small class="text-muted">ID: #<?= $o['id'] ?></small>
+                        </td>
+                        <td>
+                            <span class="text-accent" style="color:var(--accent);"><?= esc($o['event_name']) ?></span><br>
+                            <small><?= esc($o['ticket_type_name']) ?></small>
+                        </td>
+                        <td class="text-center"><?= $o['qty'] ?></td>
+                        <td>
+                            <span class="fw-bold">Rp <?= number_format($o['total_price'], 0, ',', '.') ?></span>
+                        </td>
                         <td>
                             <span class="status-badge <?= $o['status'] ?>">
                                 <?= $o['status'] ?>
                             </span>
                         </td>
                     </tr>
-                <?php endforeach ?>
-            <?php endif ?>
-            </tbody>
-        </table>
+                    <?php endforeach ?>
+                <?php endif ?>
+                </tbody>
+            </table>
+        </div>
 
         <div class="mt-3">
-            <?= $pager->links('default', 'default_full') ?>
+            <?= $pager->links('default','default_full') ?>
         </div>
 
     </div>
-
 </div>
+
+<script>
+function toggleSubmenu(element) {
+    const submenu = element.nextElementSibling;
+    const icon = element.querySelector('i');
+    if (submenu.classList.contains('open')) {
+        submenu.classList.remove('open');
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        submenu.classList.add('open');
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const activeLink = document.querySelector('.submenu a.active');
+    if (activeLink) {
+        const submenu = activeLink.closest('.submenu');
+        const sectionTitle = submenu.previousElementSibling;
+        const icon = sectionTitle.querySelector('i');
+        submenu.classList.add('open');
+        icon.style.transform = 'rotate(180deg)';
+    }
+});
+</script>
 
 </body>
 </html>

@@ -17,34 +17,39 @@ class TicketTypes extends BaseController
         $this->eventModel      = new EventModel();
     }
 
-    public function index()
-    {
-        $keyword = $this->request->getGet('keyword');
+    // Cari bagian public function index() dan ubah menjadi seperti ini:
 
-        // pagination config
-        $perPage = 10;
-        $page    = $this->request->getGet('page') ?? 1;
+public function index()
+{
+    $keyword = $this->request->getGet('keyword');
 
-        if ($keyword) {
-            $this->ticketTypeModel
-                ->groupStart()
-                    ->like('name', $keyword)
-                    ->orLike('price', $keyword)
-                    ->orLike('stock', $keyword)
-                ->groupEnd();
-        }
+    $perPage = 10;
+    $page    = $this->request->getGet('page') ?? 1;
 
-        $data = [
-            'title'       => 'Ticket Types',
-            'tickettypes' => $this->ticketTypeModel->paginate($perPage),
-            'pager'       => $this->ticketTypeModel->pager,
-            'keyword'     => $keyword,
-            'page'        => $page,
-            'perPage'     => $perPage,
-        ];
+    // Join ke tabel events untuk mengambil nama event
+    $this->ticketTypeModel->select('ticket_types.*, events.title as event_title')
+                          ->join('events', 'events.id = ticket_types.event_id', 'left');
 
-        return view('admin/masters/tickettypes_index', $data);
+    if ($keyword) {
+        $this->ticketTypeModel
+            ->groupStart()
+                ->like('ticket_types.name', $keyword)
+                ->orLike('events.title', $keyword) // Tambah pencarian berdasarkan nama event
+                ->orLike('ticket_types.price', $keyword)
+            ->groupEnd();
     }
+
+    $data = [
+        'title'       => 'Ticket Types',
+        'tickettypes' => $this->ticketTypeModel->paginate($perPage),
+        'pager'       => $this->ticketTypeModel->pager,
+        'keyword'     => $keyword,
+        'page'        => $page,
+        'perPage'     => $perPage,
+    ];
+
+    return view('admin/masters/tickettypes_index', $data);
+}
 
     public function create()
     {

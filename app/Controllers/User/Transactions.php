@@ -19,42 +19,35 @@ class Transactions extends BaseController
     }
 
     // ================= LIST TRANSAKSI USER =================
-    public function index()
-{
+   // File: App\Controllers\User\Transactions.php
+
+// File: App\Controllers\User\Transactions.php
+
+public function index() {
     $session = session();
     $user_id = $session->get('user_id');
 
-    // DEBUG: Uncomment baris di bawah ini untuk cek ID user yang login
-    // dd($user_id); 
-
-    if (!$user_id) {
-        return redirect()->to('/user/login');
-    }
+    if (!$user_id) return redirect()->to('/user/login');
 
     $orders = $this->db->table('orders o')
         ->select('
-            o.id,
-            o.qty,
-            o.total_price,
-            o.created_at,
-            o.status AS order_status,
+            o.id, o.qty, o.total_price, o.status AS order_status,
             e.title AS event_name,
-            p.ticket_code,
-            p.status AS payment_status,
-            r.status AS refund_status
+            p.ticket_code, p.status AS payment_status,
+            r.status AS refund_status,
+            c.status AS checkin_status
         ')
-        ->join('events e', 'e.id = o.event_id', 'left') // Gunakan left join untuk jaga-jaga
+        ->join('events e', 'e.id = o.event_id', 'left')
         ->join('payments p', 'p.order_id = o.id', 'left')
         ->join('refunds r', 'r.order_id = o.id', 'left')
+        ->join('checkins c', 'c.order_id = o.id', 'left') // Pastikan tabel bernama 'checkins' sesuai input Anda
         ->where('o.user_id', $user_id)
         ->where('o.status !=', 'cancelled') 
         ->orderBy('o.id', 'DESC')
         ->get()
         ->getResultArray();
 
-    return view('user/transactions_index', [
-        'orders' => $orders
-    ]);
+    return view('user/transactions_index', ['orders' => $orders]);
 }
 
     // ================= QR CODE GENERATOR =================
@@ -125,58 +118,89 @@ class Transactions extends BaseController
     }
 
     // ================= PROSES PEMBAYARAN =================
-    public function storePayment()
-    {
-        $session = session();
-        $user_id = $session->get('user_id');
+   public function storePayment()
+{
+    $session = session();
+    $user_id = $session->get('user_id');
 
-        if (!$user_id) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Silakan login.']);
-        }
-
-        $order_id = $this->request->getPost('order_id');
-        $method   = $this->request->getPost('method');
-        $file     = $this->request->getFile('payment_proof');
-
-        if (!$order_id || !$method || !$file || !$file->isValid()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Data tidak lengkap.']);
-        }
-
-        $order = $this->orderModel->find($order_id);
-        
-        if ($order['status'] === 'paid') {
-             return $this->response->setJSON(['success' => false, 'message' => 'Order ini sudah dibayar.']);
-        }
-
-        $newName = $file->getRandomName();
-        $file->move(WRITEPATH . 'uploads/payments', $newName);
-
-        $ticket_code = 'TIX-' . strtoupper(bin2hex(random_bytes(4))) . '-' . $order_id;
-
-        $this->db->transStart();
-        
-        $this->db->table('payments')->insert([
-            'order_id'      => $order_id,
-            'user_id'       => $user_id,
-            'method'        => $method,
-            'amount'        => $order['total_price'],
-            'payment_proof' => $newName,
-            'ticket_code'   => $ticket_code,
-            'status'        => 'approved', 
-            'payment_date'  => date('Y-m-d H:i:s'),
-            'created_at'    => date('Y-m-d H:i:s')
-        ]);
-
-        $this->orderModel->update($order_id, [
-            'status'       => 'paid',
-            'updated_at'   => date('Y-m-d H:i:s')
-        ]);
-        
-        $this->db->transComplete();
-
-        return $this->response->setJSON(['success' => true, 'message' => 'Pembayaran berhasil!']);
+    // 1. Validasi Sesi Login
+    if (!$user_id) {
+        return $this->response->setJSON(['success' => false, 'message' => 'Silakan login kembali.']);
     }
 
+    // 2. Ambil Input Data
+    $order_id = $this->request->getPost('order_id');
+    $method   = $this->request->getPost('method');
+    $file     = $this->request->getFile('payment_proof');
+
+    // 3. Validasi Keberadaan Data & File
+    if (!$order_id || !$method || !$file || !$file->isValid()) {
+        return $this->response->setJSON(['success' => false, 'message' => 'Data tidak lengkap atau file corrupt.']);
+    }
+
+    // 4. Tambahan: Validasi Format File (Hanya Gambar)
+    if (!in_array($file->getMimeType(), ['image/jpeg', 'image/jpg', 'image/png'])) {
+        return $this->response->setJSON(['success' => false, 'message' => 'Format file harus JPG atau PNG.']);
+    }
+
+    // 5. Cek Status Order
+    $order = $this->orderModel->find($order_id);
+    if (!$order) {
+        return $this->response->setJSON(['success' => false, 'message' => 'Order tidak ditemukan.']);
+    }
+    
+    if ($order['status'] === 'paid') {
+         return $this->response->setJSON(['success' => false, 'message' => 'Order ini sudah lunas.']);
+    }
+
+    // 6. PROSES UPLOAD KE FOLDER PUBLIC
+    // Kita pakai FCPATH agar file masuk ke folder /public/uploads/payments/
+    $newName = $file->getRandomName();
+    $uploadPath = FCPATH . 'uploads/payments';
+    
+    // Pastikan folder ada, jika tidak buat foldernya
+    if (!is_dir($uploadPath)) {
+        mkdir($uploadPath, 0777, true);
+    }
+
+    if (!$file->move($uploadPath, $newName)) {
+        return $this->response->setJSON(['success' => false, 'message' => 'Gagal memindahkan file ke server.']);
+    }
+
+    // 7. Generate Ticket Code
+    $ticket_code = 'TIX-' . strtoupper(bin2hex(random_bytes(4))) . '-' . $order_id;
+
+    // 8. Database Transaction
+    $this->db->transStart();
+    
+    // Insert ke tabel payments
+    $this->db->table('payments')->insert([
+        'order_id'      => $order_id,
+        'user_id'       => $user_id,
+        'method'        => $method,
+        'amount'        => $order['total_price'],
+        'payment_proof' => $newName, // Nama file unik yang baru saja diupload
+        'ticket_code'   => $ticket_code,
+        'status'        => 'approved', // Langsung approved atau ganti 'pending' jika butuh verifikasi admin
+        'payment_date'  => date('Y-m-d H:i:s'),
+        'created_at'    => date('Y-m-d H:i:s')
+    ]);
+
+    // Update status di tabel orders
+    $this->orderModel->update($order_id, [
+        'status'     => 'paid',
+        'updated_at' => date('Y-m-d H:i:s')
+    ]);
+    
+    $this->db->transComplete();
+
+    // 9. Response Balikan
+    if ($this->db->transStatus() === false) {
+        return $this->response->setJSON(['success' => false, 'message' => 'Terjadi kesalahan pada database.']);
+    }
+
+    return $this->response->setJSON(['success' => true, 'message' => 'Pembayaran berhasil dikonfirmasi!']);
+}
     public function storeRefund()
 {
     $session = session();
