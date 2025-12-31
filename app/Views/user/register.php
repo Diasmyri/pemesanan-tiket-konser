@@ -10,7 +10,7 @@
         --accent: #00f2fe;
         --dark: #000000;
         --white: #ffffff;
-        --brutal-border: 4px solid #ffffff;
+        --transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     body {
@@ -18,6 +18,7 @@
         font-family: 'Space Grotesk', sans-serif;
         color: var(--white);
         margin: 0;
+        overflow-x: hidden;
     }
 
     .register-section {
@@ -26,27 +27,27 @@
         align-items: center;
         justify-content: center;
         padding: 20px;
-        /* Gradient tipis biar layar gak hampa */
-        background: radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
-                    radial-gradient(circle at 10% 90%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
+        background: 
+            radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+            radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
     }
 
     .register-container {
         background: var(--dark);
         border: 6px solid var(--white);
         width: 100%;
-        max-width: 420px; /* Sedikit lebih lebar dari login karena field banyak */
-        padding: 25px 30px;
-        box-shadow: 12px 12px 0 var(--secondary); /* Pakai pink biar beda sama login */
+        max-width: 380px; /* SAMA DENGAN LOGIN */
+        padding: 25px; /* Padding lebih tipis */
+        box-shadow: 10px 10px 0 var(--secondary);
         position: relative;
     }
 
     /* --- HEADER COMPACT --- */
     .register-header {
         text-align: left;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         border-bottom: 4px solid var(--white);
-        padding-bottom: 12px;
+        padding-bottom: 10px;
     }
 
     .register-icon {
@@ -60,16 +61,16 @@
     }
 
     .register-title {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 900;
         text-transform: uppercase;
-        letter-spacing: -2px;
-        line-height: 0.9;
+        letter-spacing: -1.5px;
+        line-height: 0.85;
         margin-bottom: 8px;
     }
 
     .register-subtitle {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 700;
         color: var(--dark);
         background: var(--accent);
@@ -78,33 +79,27 @@
         text-transform: uppercase;
     }
 
-    /* --- ALERTS --- */
+    /* --- ALERT --- */
     .alert {
-        padding: 10px;
+        padding: 8px 12px;
         border: 3px solid var(--white);
         font-weight: 800;
         text-transform: uppercase;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         margin-bottom: 15px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    .alert-success { background: #22c55e; color: white; }
     .alert-error { background: var(--secondary); color: white; }
 
-    /* --- FORM COMPACT --- */
-    form {
+    /* --- FORM GRID COMPACT --- */
+    .register-form {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Bikin 2 kolom untuk field tertentu biar pendek */
-        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
     }
 
-    .form-group {
-        margin-bottom: 0px;
-    }
-
-    /* Username & Nama full width */
     .form-group.full { grid-column: span 2; }
 
     .form-label {
@@ -113,7 +108,7 @@
         text-transform: uppercase;
         font-size: 0.7rem;
         margin-bottom: 4px;
-        color: #aaa;
+        color: #ccc;
     }
 
     .form-input {
@@ -125,7 +120,7 @@
         font-family: 'Space Grotesk', sans-serif;
         font-weight: 700;
         font-size: 0.85rem;
-        transition: 0.15s;
+        transition: var(--transition);
     }
 
     .form-input:focus {
@@ -144,12 +139,12 @@
         text-transform: uppercase;
         font-size: 0.9rem;
         cursor: pointer;
-        transition: 0.2s;
+        transition: var(--transition);
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        margin-top: 10px;
+        margin-top: 5px;
     }
 
     .btn-submit:hover {
@@ -159,36 +154,39 @@
         box-shadow: 8px 8px 0 var(--primary);
     }
 
-    /* --- FOOTER --- */
+    /* --- FOOTER COMPACT --- */
     .register-footer {
         grid-column: span 2;
         margin-top: 15px;
-        text-align: center;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
     }
 
     .footer-link {
-        border: 2px solid #444;
-        padding: 10px;
-        transition: 0.2s;
+        border: 2px solid #333;
+        padding: 8px;
+        text-align: center;
+        transition: var(--transition);
+        background: #0a0a0a;
+        text-decoration: none;
     }
 
-    .footer-link a {
-        color: var(--accent);
-        text-decoration: none;
+    .footer-link span {
+        color: var(--white);
         font-weight: 900;
-        font-size: 0.75rem;
+        font-size: 0.65rem;
         text-transform: uppercase;
     }
 
     .footer-link:hover {
+        background: var(--white);
         border-color: var(--white);
-        background: #111;
     }
+    .footer-link:hover span { color: var(--dark); }
 
-    /* Biar gak sesek di HP */
-    @media (max-width: 400px) {
-        form { grid-template-columns: 1fr; }
-        .form-group { grid-column: span 1 !important; }
+    @media (max-height: 750px) {
+        .register-container { transform: scale(0.9); }
     }
 </style>
 
@@ -199,15 +197,8 @@
                 <i class="fas fa-user-plus"></i>
             </div>
             <h2 class="register-title">JOIN THE<br>MOSH PIT!</h2>
-            <p class="register-subtitle">Buat akun untuk booking tiket</p>
+            <p class="register-subtitle">Registrasi akun baru</p>
         </div>
-
-        <?php if(session()->getFlashdata('success')): ?>
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                <span><?= session()->getFlashdata('success') ?></span>
-            </div>
-        <?php endif; ?>
 
         <?php if(session()->getFlashdata('error')): ?>
             <div class="alert alert-error">
@@ -216,40 +207,40 @@
             </div>
         <?php endif; ?>
 
-        <form action="<?= base_url('user/register') ?>" method="POST">
+        <form action="<?= base_url('user/register') ?>" method="POST" class="register-form">
             <div class="form-group full">
-                <label class="form-label"><i class="fas fa-user"></i> Username</label>
-                <input type="text" name="username" class="form-input" placeholder="USERNAME" required>
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-input" placeholder="USER123" required>
             </div>
 
             <div class="form-group full">
-                <label class="form-label"><i class="fas fa-id-card"></i> Nama Lengkap</label>
+                <label class="form-label">Nama Lengkap</label>
                 <input type="text" name="nama" class="form-input" placeholder="NAMA LENGKAP" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
-                <input type="email" name="email" class="form-input" placeholder="EMAIL" required>
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" placeholder="MAIL@" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label"><i class="fas fa-phone"></i> Telepon</label>
-                <input type="text" name="nomor_telepon" class="form-input" placeholder="NOMOR" required>
+                <label class="form-label">Telepon</label>
+                <input type="text" name="nomor_telepon" class="form-input" placeholder="08..." required>
             </div>
 
             <div class="form-group full">
-                <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                <label class="form-label">Password</label>
                 <input type="password" name="password" class="form-input" placeholder="********" required>
             </div>
 
             <button type="submit" class="btn-submit">
-                <i class="fas fa-user-plus"></i> DAFTAR SEKARANG
+                <i class="fas fa-rocket"></i> DAFTAR
             </button>
 
             <div class="register-footer">
-                <div class="footer-link">
-                    <a href="<?= base_url('user/login') ?>">SUDAH PUNYA AKUN? LOGIN</a>
-                </div>
+                <a href="<?= base_url('user/login') ?>" class="footer-link">
+                    <span>Sudah punya akun? <b>LOGIN</b></span>
+                </a>
             </div>
         </form>
     </div>

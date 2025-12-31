@@ -11,6 +11,7 @@
         --dark: #000000;
         --white: #ffffff;
         --brutal-border: 4px solid #ffffff;
+        --transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     body {
@@ -18,177 +19,210 @@
         font-family: 'Space Grotesk', sans-serif;
         color: var(--white);
         margin: 0;
-        overflow: hidden; /* Mencegah scroll di body jika tidak perlu */
+        min-height: 100vh;
     }
 
+    /* --- LOGIN SECTION --- */
     .login-section {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
-        background: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
-                    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
+        padding: 40px 20px;
+        background: 
+            radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+            radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
+        position: relative;
     }
 
     .login-container {
         background: var(--dark);
-        border: 6px solid var(--white); /* Border dikecilin dikit */
+        border: 6px solid var(--white);
         width: 100%;
-        max-width: 380px; /* Di-press dari 480px ke 380px */
-        padding: 30px; /* Padding dipangkas biar lebih pendek */
+        max-width: 400px;
+        padding: 40px 30px;
         box-shadow: 12px 12px 0 var(--primary);
         position: relative;
+        z-index: 10;
+        transition: var(--transition);
     }
 
-    /* --- HEADER LOGIN COMPACT --- */
+    /* --- HEADER LOGIN --- */
     .login-header {
         text-align: left;
-        margin-bottom: 20px;
-        border-bottom: 4px solid var(--white);
-        padding-bottom: 15px;
+        margin-bottom: 25px;
+        border-bottom: 5px solid var(--white);
+        padding-bottom: 20px;
     }
 
     .login-icon {
-        font-size: 1.8rem; /* Lebih kecil */
+        font-size: 2rem;
         color: var(--accent);
-        margin-bottom: 10px;
-        display: inline-block;
-        border: 2px solid var(--white);
-        padding: 8px;
+        margin-bottom: 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--white);
+        width: 50px;
+        height: 50px;
         background: #111;
+        box-shadow: 4px 4px 0 var(--white);
     }
 
     .login-title {
-        font-size: 2.2rem; /* Ukuran judul dipangkas */
+        font-size: 2.5rem;
         font-weight: 900;
         text-transform: uppercase;
         letter-spacing: -2px;
-        line-height: 0.85;
-        margin-bottom: 10px;
+        line-height: 0.9;
+        margin-bottom: 12px;
         color: var(--white);
     }
 
     .login-subtitle {
-        font-size: 0.8rem; /* Font subtitle lebih kecil */
-        font-weight: 700;
+        font-size: 0.75rem;
+        font-weight: 800;
         color: var(--dark);
         background: var(--accent);
         display: inline-block;
-        padding: 2px 8px;
+        padding: 4px 10px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
     }
 
     /* --- ALERT --- */
     .alert-error {
         background: var(--secondary);
         color: white;
-        padding: 10px;
+        padding: 12px;
         border: 3px solid var(--white);
         font-weight: 800;
         text-transform: uppercase;
-        font-size: 0.7rem;
-        margin-bottom: 15px;
+        font-size: 0.75rem;
+        margin-bottom: 20px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
     }
 
-    /* --- FORM STYLING COMPACT --- */
+    /* --- FORM STYLING --- */
     .form-group {
-        margin-bottom: 15px; /* Jarak antar input dipersempit */
+        margin-bottom: 18px;
     }
 
     .form-label {
         display: block;
         font-weight: 900;
         text-transform: uppercase;
-        font-size: 0.75rem;
-        margin-bottom: 6px;
+        font-size: 0.8rem;
+        margin-bottom: 8px;
+        color: var(--accent);
     }
 
     .form-input {
         width: 100%;
-        padding: 12px; /* Input lebih tipis */
-        background: #111;
+        padding: 14px;
+        background: #0a0a0a;
         border: 3px solid var(--white);
         color: var(--white);
         font-family: 'Space Grotesk', sans-serif;
         font-weight: 700;
-        font-size: 0.9rem;
-        transition: 0.2s;
+        font-size: 1rem;
+        transition: var(--transition);
     }
 
     .form-input:focus {
         outline: none;
-        box-shadow: 4px 4px 0 var(--accent);
-        transform: translate(-2px, -2px);
+        background: #111;
+        box-shadow: 6px 6px 0 var(--accent);
+        transform: translate(-3px, -3px);
     }
 
     .btn-submit {
         width: 100%;
-        padding: 15px; /* Button lebih pendek */
+        padding: 16px;
         background: var(--primary);
         color: white;
-        border: 3px solid var(--white);
+        border: 4px solid var(--white);
         font-weight: 900;
         text-transform: uppercase;
-        font-size: 0.95rem;
+        font-size: 1rem;
         cursor: pointer;
-        transition: 0.2s;
+        transition: var(--transition);
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        margin-top: 5px;
+        gap: 12px;
+        margin-top: 10px;
     }
 
     .btn-submit:hover {
         background: var(--white);
         color: var(--dark);
-        transform: translate(-4px, -4px);
-        box-shadow: 8px 8px 0 var(--secondary);
+        transform: translate(-5px, -5px);
+        box-shadow: 10px 10px 0 var(--secondary);
     }
 
-    /* --- FOOTER GRID COMPACT --- */
+    /* --- FOOTER GRID --- */
     .login-footer {
-        margin-top: 25px;
+        margin-top: 30px;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        gap: 10px;
     }
 
     .footer-link {
-        border: 2px solid var(--white);
-        padding: 10px 5px;
+        border: 2px solid #333;
+        padding: 12px 5px;
         text-align: center;
-        transition: 0.2s;
-        background: #111;
+        transition: var(--transition);
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .footer-link.full-width {
         grid-column: span 2;
-        border-color: #333;
+        border-color: #444;
     }
 
     .footer-link a {
-        color: var(--white);
+        color: #888;
         text-decoration: none;
-        font-weight: 900;
+        font-weight: 800;
         font-size: 0.7rem;
         text-transform: uppercase;
+        transition: var(--transition);
     }
 
     .footer-link:hover {
         background: var(--white);
+        border-color: var(--white);
         box-shadow: 4px 4px 0 var(--accent);
+        transform: translateY(-2px);
     }
 
-    .footer-link:hover a { color: var(--dark); }
+    .footer-link:hover a { 
+        color: var(--dark); 
+    }
 
-    @media (max-height: 700px) {
-        .login-container { transform: scale(0.9); } /* Mengecil otomatis di layar pendek */
+    /* --- RESPONSIVE --- */
+    @media (max-width: 450px) {
+        .login-container {
+            padding: 30px 20px;
+            max-width: 100%;
+            border-width: 4px;
+        }
+        .login-title {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-height: 650px) {
+        .login-section { padding: 20px; }
+        .login-container { transform: scale(0.9); }
     }
 </style>
 
@@ -212,7 +246,7 @@
         <form action="<?= base_url('user/login') ?>" method="POST">
             <div class="form-group">
                 <label class="form-label"><i class="fas fa-user"></i> Username</label>
-                <input type="text" name="username" class="form-input" placeholder="USERNAME" required>
+                <input type="text" name="username" class="form-input" placeholder="USERNAME" required autofocus>
             </div>
 
             <div class="form-group">
@@ -227,14 +261,14 @@
 
         <div class="login-footer">
             <div class="footer-link">
-                <a href="<?= base_url('user/register') ?>">DAFTAR</a>
+                <a href="<?= base_url('user/register') ?>">BUAT AKUN</a>
             </div>
             <div class="footer-link">
-                <a href="<?= base_url('user/forgot-password') ?>">RESET</a>
+                <a href="<?= base_url('user/forgot-password') ?>">LUPA PASSWORD?</a>
             </div>
             <div class="footer-link full-width">
                 <a href="<?= base_url('user') ?>">
-                    <i class="fas fa-arrow-left"></i> KEMBALI
+                    <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> KEMBALI KE HOME
                 </a>
             </div>
         </div>

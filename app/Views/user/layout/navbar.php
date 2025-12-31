@@ -1,3 +1,5 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Space+Mono:wght@700&display=swap');
 
@@ -51,7 +53,7 @@
         align-items: center;
     }
 
-    /* --- LOGO: SHARP & MINIMAL --- */
+    /* --- LOGO: KONSERKU --- */
     .nav-logo {
         display: flex;
         align-items: center;
@@ -61,6 +63,7 @@
         font-weight: 800;
         font-size: 1.3rem;
         letter-spacing: -1px;
+        text-transform: uppercase;
     }
 
     .logo-mark {
@@ -77,7 +80,7 @@
         position: relative;
     }
 
-    /* --- MENU: FULL HEIGHT STYLE --- */
+    /* --- MENU --- */
     .nav-menu {
         display: flex;
         list-style: none;
@@ -106,7 +109,6 @@
         background: rgba(255, 255, 255, 0.03);
     }
 
-    /* Indicator Aktif yang "Rusak" tapi Rapi */
     .nav-link.active {
         color: #fff;
         background: rgba(139, 92, 246, 0.1);
@@ -123,13 +125,14 @@
         box-shadow: 0 0 15px var(--accent);
     }
 
-    /* --- SIGN OUT: CLEAN INDUSTRIAL --- */
+    /* --- SIGN OUT --- */
     .nav-right {
         display: flex;
         align-items: center;
     }
 
     .btn-logout {
+        cursor: pointer;
         text-decoration: none;
         color: #fff;
         font-family: 'Space Mono', monospace;
@@ -140,6 +143,9 @@
         background: transparent;
         transition: 0.2s;
         text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .btn-logout:hover {
@@ -149,7 +155,7 @@
         box-shadow: 4px 4px 0px var(--accent);
     }
 
-    /* Micro Animation: Glitch pada teks logo */
+    /* Micro Animation: Glitch */
     .nav-logo:hover span {
         animation: glitch-text 0.2s infinite;
     }
@@ -159,27 +165,72 @@
         50% { transform: translate(-2px, 1px); text-shadow: -2px 0 var(--accent-alt); }
         100% { transform: translate(0); }
     }
+
+    /* Custom Style SweetAlert Brutalist */
+    .swal2-popup.brutal-swal {
+        border: 5px solid white !important;
+        border-radius: 0 !important;
+        box-shadow: 10px 10px 0px var(--accent) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .swal2-title { text-transform: uppercase; font-weight: 900 !important; }
+    .swal2-confirm { 
+        border-radius: 0 !important; 
+        background-color: var(--accent) !important; 
+        border: 2px solid white !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+    }
+    .swal2-cancel { 
+        border-radius: 0 !important; 
+        background-color: #ec4899 !important; 
+        border: 2px solid white !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+    }
 </style>
 
 <nav class="navbar">
     <div class="nav-container">
-        <a href="#" class="nav-logo">
-            <div class="logo-mark"><i class="fas fa-bolt"></i></div>
-            <span>TIXCORE<span style="color: var(--accent);">_</span></span>
+        <a href="<?= base_url('user/home') ?>" class="nav-logo">
+            <div class="logo-mark"><i class="fas fa-ticket-alt"></i></div>
+            <span>KONSER<span style="color: var(--accent);">KU</span></span>
         </a>
 
         <ul class="nav-menu">
-            <li><a href="/user/home" class="nav-link">Home</a></li>
-            <li><a href="/user/events" class="nav-link">Explore</a></li>
-            <li><a href="/user/transactions" class="nav-link">My Tickets</a></li>
-            <li><a href="/user/profile" class="nav-link active">Profile</a></li>
+            <li><a href="<?= base_url('user/home') ?>" class="nav-link">Home</a></li>
+            <li><a href="<?= base_url('user/events') ?>" class="nav-link">Explore</a></li>
+            <li><a href="<?= base_url('user/transactions') ?>" class="nav-link">My Tickets</a></li>
+            <li><a href="<?= base_url('user/profile') ?>" class="nav-link active">Profile</a></li>
         </ul>
 
-<div class="nav-right"> 
-    <a href="<?= base_url('user/logout') ?>" class="btn-logout">
-        <span>Sign Out</span>
-        <i class="fas fa-sign-out-alt"></i>
-    </a>
-</div>
+        <div class="nav-right"> 
+            <a href="javascript:void(0)" onclick="handleLogout()" class="btn-logout">
+                <span>Sign Out</span>
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
     </div>
 </nav>
+
+<script>
+function handleLogout() {
+    Swal.fire({
+        title: 'KELUAR DARI SISTEM?',
+        text: "Pastikan semua pesanan tiket Anda sudah selesai!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'YA, LOGOUT',
+        cancelButtonText: 'BATAL',
+        background: '#111',
+        color: '#fff',
+        customClass: {
+            popup: 'brutal-swal'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "<?= base_url('user/logout') ?>";
+        }
+    });
+}
+</script>
