@@ -206,7 +206,7 @@
 
         <div class="nav-right"> 
             <a href="javascript:void(0)" onclick="handleLogout()" class="btn-logout">
-                <span>Sign Out</span>
+                <span>LOGOUT</span>
                 <i class="fas fa-sign-out-alt"></i>
             </a>
         </div>

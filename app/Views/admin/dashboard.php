@@ -2,6 +2,8 @@
 
 <?= $this->section('content') ?>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
     :root {
         --primary: #4318FF;
@@ -131,11 +133,11 @@
     <div class="stats-container">
         <div class="card-box">
             <div class="card-title">Tickets Sold</div>
-            <div class="card-value"><?= number_format($totalTicketsSold) ?></div>
+            <div class="card-value"><?= number_format($totalTicketsSold ?? 0) ?></div>
         </div>
         <div class="card-box">
             <div class="card-title">Check-In</div>
-            <div class="card-value"><?= number_format($totalCheckIn) ?></div>
+            <div class="card-value"><?= number_format($totalCheckIn ?? 0) ?></div>
             <div style="font-size: 13px; color: var(--success); font-weight: 700; margin-top: 8px; display: flex; align-items: center; gap: 5px;">
                 <div style="width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></div>
                 <?= ($totalTicketsSold > 0) ? round(($totalCheckIn / $totalTicketsSold) * 100, 1) : 0 ?>% scan rate
@@ -143,15 +145,15 @@
         </div>
         <div class="card-box">
             <div class="card-title">Total Events</div>
-            <div class="card-value"><?= number_format($totalEvents) ?></div>
+            <div class="card-value"><?= number_format($totalEvents ?? 0) ?></div>
         </div>
         <div class="card-box">
             <div class="card-title">Active Users</div>
-            <div class="card-value"><?= number_format($totalUsers) ?></div>
+            <div class="card-value"><?= number_format($totalUsers ?? 0) ?></div>
         </div>
         <div class="card-box" style="background: linear-gradient(135deg, #4318FF 0%, #70adf1 100%); border: none;">
             <div class="card-title" style="color: rgba(255,255,255,0.7)">Net Revenue</div>
-            <div class="card-value" style="color: #fff; font-size: 26px;">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></div>
+            <div class="card-value" style="color: #fff; font-size: 26px;">Rp <?= number_format($totalRevenue ?? 0, 0, ',', '.') ?></div>
         </div>
     </div>
 
@@ -288,10 +290,10 @@ document.addEventListener("DOMContentLoaded", function() {
         new Chart(salesCtx, {
             type: "line",
             data: {
-                labels: <?= json_encode(array_column($sales7days, 'day')) ?>,
+                labels: <?= json_encode(array_column($sales7days ?? [], 'day')) ?>,
                 datasets: [{
                     label: 'Tickets Sold',
-                    data: <?= json_encode(array_column($sales7days, 'total')) ?>,
+                    data: <?= json_encode(array_column($sales7days ?? [], 'total')) ?>,
                     borderColor: "#4318FF",
                     backgroundColor: 'rgba(67, 24, 255, 0.08)',
                     fill: true, 
@@ -321,9 +323,9 @@ document.addEventListener("DOMContentLoaded", function() {
         new Chart(paymentCtx, {
             type: "doughnut",
             data: {
-                labels: <?= json_encode(array_column($paymentStatus, 'status')) ?>,
+                labels: <?= json_encode(array_column($paymentStatus ?? [], 'status')) ?>,
                 datasets: [{
-                    data: <?= json_encode(array_column($paymentStatus, 'total')) ?>,
+                    data: <?= json_encode(array_column($paymentStatus ?? [], 'total')) ?>,
                     backgroundColor: ["#4318FF", "#ffb814", "#ee5d50", "#a3aed0", "#05cd99"],
                     borderWidth: 0,
                     hoverOffset: 20
